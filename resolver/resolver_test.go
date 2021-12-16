@@ -12,42 +12,74 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package test
+package resolver
 
 import (
 	"context"
 	"net"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/registry"
 	nacosregistry "github.com/kitex-contrib/registry-nacos/registry"
-	nacosresolver "github.com/kitex-contrib/registry-nacos/resolver"
+	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
-	"github.com/stretchr/testify/assert"
+	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-func Test_nacosResolver_Resolve(t *testing.T) {
-	client, err := getNacosClient()
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-	info := &registry.Info{
-		ServiceName: "demo.kitex-contrib.local",
+var (
+	nacosCli naming_client.INamingClient
+	svcName  = "demo.kitex-contrib.local"
+	svcInfo  = &registry.Info{
+		ServiceName: svcName,
 		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848},
 		Weight:      999,
 		StartTime:   time.Now(),
 		Tags:        map[string]string{"env": "local"},
 	}
+)
 
-	err = nacosregistry.NewNacosRegistry(client).Register(info)
+func init() {
+	cli, err := getNacosClient()
 	if err != nil {
-		t.Errorf("Register Fail:%v", err)
 		return
 	}
+	err = nacosregistry.NewNacosRegistry(cli).Register(svcInfo)
+	if err != nil {
+		return
+	}
+	time.Sleep(time.Second)
+	nacosCli = cli
+}
 
+func getNacosClient() (naming_client.INamingClient, error) {
+	sc := []constant.ServerConfig{
+		*constant.NewServerConfig("127.0.0.1", 8848),
+	}
+
+	cc := constant.ClientConfig{
+		NamespaceId:         "public",
+		TimeoutMs:           5000,
+		NotLoadCacheAtStart: true,
+		LogDir:              "/tmp/nacos/log",
+		CacheDir:            "/tmp/nacos/cache",
+		RotateTime:          "1h",
+		MaxAge:              3,
+		LogLevel:            "debug",
+	}
+
+	return clients.NewNamingClient(
+		vo.NacosClientParam{
+			ClientConfig:  &cc,
+			ServerConfigs: sc,
+		},
+	)
+}
+
+func Test_nacosResolver_Resolve(t *testing.T) {
 	type fields struct {
 		cli naming_client.INamingClient
 	}
@@ -66,9 +98,9 @@ func Test_nacosResolver_Resolve(t *testing.T) {
 			name: "common",
 			args: args{
 				ctx:  context.Background(),
-				desc: "demo.kitex-contrib.local",
+				desc: svcName,
 			},
-			fields: fields{cli: client},
+			fields: fields{cli: nacosCli},
 		},
 		{
 			name: "wrong desc",
@@ -76,30 +108,27 @@ func Test_nacosResolver_Resolve(t *testing.T) {
 				ctx:  context.Background(),
 				desc: "xxxx.kitex-contrib.local",
 			},
-			fields:  fields{cli: client},
+			fields:  fields{cli: nacosCli},
 			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := nacosresolver.NewNacosResolver(tt.fields.cli)
-			got, err := n.Resolve(tt.args.ctx, tt.args.desc)
+			n := NewNacosResolver(tt.fields.cli)
+			_, err := n.Resolve(tt.args.ctx, tt.args.desc)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Resolve() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !tt.wantErr {
-				assert.NotEmpty(t, got.Instances)
-				if len(got.Instances) > 0 {
-					assert.Equal(t, got.Instances[0].Address().String(), "127.0.0.1:8848")
-					assert.Equal(t, got.Instances[0].Weight(), 999)
-				}
+			if err != nil && !strings.Contains(err.(error).Error(), "instance list is empty") {
+				t.Errorf("Resolve err is not expectant")
+				return
 			}
 		})
 	}
 
-	err = nacosregistry.NewNacosRegistry(client).Deregister(info)
+	err := nacosregistry.NewNacosRegistry(nacosCli).Deregister(svcInfo)
 	if err != nil {
 		t.Errorf("Deregister Fail")
 		return

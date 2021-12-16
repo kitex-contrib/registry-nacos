@@ -1,4 +1,4 @@
-# registry-nacos *(This is a community driven project)*
+# registry-nacos (*This is a community driven project*)
 
 Nacos as service discovery.
 
@@ -35,9 +35,9 @@ func main() {
     }
     
     cli, err := clients.NewNamingClient(
-        vo.NacosClientParam{
-        ClientConfig:  &cc,
-        ServerConfigs: sc,
+            vo.NacosClientParam{
+            ClientConfig:  &cc,
+            ServerConfigs: sc,
         },
     )
     if err != nil {
@@ -87,8 +87,8 @@ func main() {
 
 	cli,err := clients.NewNamingClient(
         vo.NacosClientParam{
-        ClientConfig:  &cc,
-        ServerConfigs: sc,
+            ClientConfig:  &cc,
+            ServerConfigs: sc,
         },
 	)
 	if err != nil {

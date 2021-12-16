@@ -20,6 +20,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Prepare Nacos
+        run: |
+          make prepare
+
       - name: Check License Header
         uses: apache/skywalking-eyes@main
         env:
@@ -33,11 +37,7 @@ jobs:
           go vet -stdmethods=false $(go list ./...)
           go install mvdan.cc/gofumpt@v0.2.0
           test -z "$(gofumpt -l -extra .)" 
-          
-      - name: Prepare Nacos
-        run: |
-          make prepare
-          
+
       - name: Unit Test
         run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
 

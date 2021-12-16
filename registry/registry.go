@@ -24,27 +24,65 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-type nacosRegistry struct {
-	cli naming_client.INamingClient
+type options struct {
+	cluster string
+	group   string
 }
 
-func NewNacosRegistry(cli naming_client.INamingClient) registry.Registry {
-	return &nacosRegistry{cli: cli}
+// Option is nacos option.
+type Option func(o *options)
+
+// WithCluster with cluster option.
+func WithCluster(cluster string) Option {
+	return func(o *options) { o.cluster = cluster }
+}
+
+// WithGroup with group option.
+func WithGroup(group string) Option {
+	return func(o *options) { o.group = group }
+}
+
+type nacosRegistry struct {
+	cli  naming_client.INamingClient
+	opts options
+}
+
+func NewNacosRegistry(cli naming_client.INamingClient, opts ...Option) registry.Registry {
+	op := options{
+		cluster: "DEFAULT",
+		group:   "DEFAULT_GROUP",
+	}
+	for _, option := range opts {
+		option(&op)
+	}
+	return &nacosRegistry{cli: cli, opts: op}
 }
 
 var _ registry.Registry = (*nacosRegistry)(nil)
 
 func (n *nacosRegistry) Register(info *registry.Info) error {
+	if info == nil {
+		return fmt.Errorf("registry.Info can not be empty")
+	}
 	if info.ServiceName == "" {
-		return fmt.Errorf("registry.Info cannot is empty")
+		return fmt.Errorf("registry.Info ServiceName can not be empty")
+	}
+	if info.Addr == nil {
+		return fmt.Errorf("registry.Info Addr can not be empty")
 	}
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {
-		return fmt.Errorf("parse registry info addr error:%v", err)
+		return fmt.Errorf("parse registry info addr error:%w", err)
 	}
 	p, err := strconv.Atoi(port)
 	if err != nil {
-		return err
+		return fmt.Errorf("parse registry info port error:%w", err)
+	}
+	if host == "" {
+		host, err = n.getLocalIpv4Host()
+		if err != nil {
+			return fmt.Errorf("parse registry info addr error:%w", err)
+		}
 	}
 	_, e := n.cli.RegisterInstance(vo.RegisterInstanceParam{
 		Ip:          host,
@@ -56,9 +94,26 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Metadata:    info.Tags,
 	})
 	if e != nil {
-		return fmt.Errorf("RegisterInstance err:%v", e)
+		return fmt.Errorf("register instance err:%w", e)
 	}
 	return nil
+}
+
+func (n *nacosRegistry) getLocalIpv4Host() (string, error) {
+	addr, err := net.InterfaceAddrs()
+	if err != nil {
+		return "", err
+	}
+	for _, addr := range addr {
+		ipNet, isIpNet := addr.(*net.IPNet)
+		if isIpNet && !ipNet.IP.IsLoopback() {
+			ipv4 := ipNet.IP.To4()
+			if ipv4 != nil {
+				return ipv4.String(), nil
+			}
+		}
+	}
+	return "", fmt.Errorf("not found ipv4 address")
 }
 
 func (n *nacosRegistry) Deregister(info *registry.Info) error {
@@ -68,7 +123,13 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 	}
 	p, err := strconv.Atoi(port)
 	if err != nil {
-		return err
+		return fmt.Errorf("parse registry info port error:%w", err)
+	}
+	if host == "" {
+		host, err = n.getLocalIpv4Host()
+		if err != nil {
+			return fmt.Errorf("parse registry info addr error:%w", err)
+		}
 	}
 	if _, err = n.cli.DeregisterInstance(vo.DeregisterInstanceParam{
 		Ip:          host,
