@@ -1,4 +1,4 @@
-# registry-nacos
+# registry-nacos *(This is a community driven project)*
 
 Nacos as service discovery.
 
