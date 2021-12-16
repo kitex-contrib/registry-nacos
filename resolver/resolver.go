@@ -24,28 +24,61 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
+type options struct {
+	cluster string
+	group   string
+}
+
+// Option is nacos option.
+type Option func(o *options)
+
+// WithCluster with cluster option.
+func WithCluster(cluster string) Option {
+	return func(o *options) { o.cluster = cluster }
+}
+
+// WithGroup with group option.
+func WithGroup(group string) Option {
+	return func(o *options) { o.group = group }
+}
+
 type nacosResolver struct {
-	cli naming_client.INamingClient
+	cli  naming_client.INamingClient
+	opts options
 }
 
-func NewNacosResolver(cli naming_client.INamingClient) discovery.Resolver {
-	return &nacosResolver{cli: cli}
+// NewNacosResolver create a service resolver using nacos.
+func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery.Resolver {
+	op := options{
+		cluster: "DEFAULT",
+		group:   "DEFAULT_GROUP",
+	}
+	for _, option := range opts {
+		option(&op)
+	}
+	return &nacosResolver{cli: cli, opts: op}
 }
 
-func (n nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (description string) {
+func (n *nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (description string) {
 	return target.ServiceName()
 }
 
-func (n nacosResolver) Resolve(_ context.Context, desc string) (discovery.Result, error) {
+// Resolve a service info by desc.
+func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Result, error) {
 	res, err := n.cli.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: desc,
 		HealthyOnly: true,
+		GroupName:   n.opts.group,
+		Clusters:    []string{n.opts.cluster},
 	})
 	if err != nil {
 		return discovery.Result{}, err
 	}
 	var instances []discovery.Instance
 	for _, in := range res {
+		if !in.Enable {
+			continue
+		}
 		instances = append(instances, discovery.NewInstance(
 			"tcp",
 			fmt.Sprintf("%s:%d", in.Ip, in.Port),
@@ -60,11 +93,11 @@ func (n nacosResolver) Resolve(_ context.Context, desc string) (discovery.Result
 	}, nil
 }
 
-func (n nacosResolver) Diff(cacheKey string, prev, next discovery.Result) (discovery.Change, bool) {
+func (n *nacosResolver) Diff(cacheKey string, prev, next discovery.Result) (discovery.Change, bool) {
 	return discovery.DefaultDiff(cacheKey, prev, next)
 }
 
-func (n nacosResolver) Name() string {
+func (n *nacosResolver) Name() string {
 	return "nacos"
 }
 

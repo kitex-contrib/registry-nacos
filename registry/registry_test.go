@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package test
+package registry
 
 import (
 	"net"
@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/registry"
-	nacosregistry "github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
@@ -58,7 +57,7 @@ func TestNewNacosRegistry(t *testing.T) {
 		t.Errorf("err:%v", err)
 		return
 	}
-	got := nacosregistry.NewNacosRegistry(client)
+	got := NewNacosRegistry(client, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 	assert.NotNil(t, got)
 }
 
@@ -95,7 +94,7 @@ func Test_nacosRegistry_Register(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := nacosregistry.NewNacosRegistry(tt.fields.cli)
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 			if err := n.Register(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -136,7 +135,7 @@ func Test_nacosRegistry_Deregister(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := nacosregistry.NewNacosRegistry(tt.fields.cli)
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 			if err := n.Deregister(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Deregister() error = %v, wantErr %v", err, tt.wantErr)
 			}

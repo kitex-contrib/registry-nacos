@@ -1,4 +1,4 @@
-# registry-nacos
+# registry-nacos (*This is a community driven project*)
 
 Nacos as service discovery.
 
@@ -35,9 +35,9 @@ func main() {
     }
     
     cli, err := clients.NewNamingClient(
-        vo.NacosClientParam{
-        ClientConfig:  &cc,
-        ServerConfigs: sc,
+            vo.NacosClientParam{
+            ClientConfig:  &cc,
+            ServerConfigs: sc,
         },
     )
     if err != nil {
@@ -87,8 +87,8 @@ func main() {
 
 	cli,err := clients.NewNamingClient(
         vo.NacosClientParam{
-        ClientConfig:  &cc,
-        ServerConfigs: sc,
+            ClientConfig:  &cc,
+            ServerConfigs: sc,
         },
 	)
 	if err != nil {
@@ -101,3 +101,8 @@ func main() {
     // ...
 }
 ```
+## Compatibility
+The server of Nacos2.0 is fully compatible with 1.X nacos-sdk-go. [see](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
+
+
+maintained by: [baiyutang](https://github.com/baiyutang)
