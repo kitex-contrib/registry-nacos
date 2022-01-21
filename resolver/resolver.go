@@ -55,7 +55,7 @@ func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery
 	for _, option := range opts {
 		option(&op)
 	}
-	return &nacosResolver{cli: cli}
+	return &nacosResolver{cli: cli, opts: op}
 }
 
 func (n *nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (description string) {
@@ -66,6 +66,8 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 	res, err := n.cli.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: desc,
 		HealthyOnly: true,
+		GroupName:   n.opts.group,
+		Clusters:    []string{n.opts.cluster},
 	})
 	if err != nil {
 		return discovery.Result{}, err

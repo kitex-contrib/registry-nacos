@@ -92,6 +92,8 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Enable:      true,
 		Healthy:     true,
 		Metadata:    info.Tags,
+		GroupName:   n.opts.group,
+		ClusterName: n.opts.cluster,
 	})
 	if e != nil {
 		return fmt.Errorf("register instance err:%w", e)
