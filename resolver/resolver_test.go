@@ -28,14 +28,16 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
 	nacosCli naming_client.INamingClient
 	svcName  = "demo.kitex-contrib.local"
+	svcAddr  = net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848}
 	svcInfo  = &registry.Info{
 		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848},
+		Addr:        &svcAddr,
 		Weight:      999,
 		StartTime:   time.Now(),
 		Tags:        map[string]string{"env": "local"},
@@ -121,7 +123,7 @@ func Test_nacosResolver_Resolve(t *testing.T) {
 				t.Errorf("Resolve() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if err != nil && !strings.Contains(err.(error).Error(), "instance list is empty") {
+			if err != nil && !strings.Contains(err.Error(), "instance list is empty") {
 				t.Errorf("Resolve err is not expectant")
 				return
 			}
@@ -133,4 +135,25 @@ func Test_nacosResolver_Resolve(t *testing.T) {
 		t.Errorf("Deregister Fail")
 		return
 	}
+}
+
+func Test_nacosResolver_DifferentCluster(t *testing.T) {
+	ctx := context.Background()
+	n := NewNacosResolver(nacosCli)
+	got, err := n.Resolve(ctx, svcName)
+	assert.Nil(t, err)
+	assert.NotNil(t, got)
+	assert.Equal(t, svcName, got.CacheKey)
+	if assert.NotEmpty(t, got.Instances) {
+		gotSvc := got.Instances[0]
+		assert.Equal(t, gotSvc.Address().String(), svcAddr.String())
+	}
+
+	n = NewNacosResolver(nacosCli, WithCluster("OTHER"))
+	_, err = n.Resolve(ctx, svcName)
+	assert.NotNil(t, err)
+	if err == nil {
+		return
+	}
+	assert.Contains(t, err.Error(), "instance list is empty")
 }
