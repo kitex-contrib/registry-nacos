@@ -57,7 +57,7 @@ func TestNewNacosRegistry(t *testing.T) {
 		t.Errorf("err:%v", err)
 		return
 	}
-	got := NewNacosRegistry(client, WithCluster("DEFAULT"), WithCluster("DEFAULT_GROUP"))
+	got := NewNacosRegistry(client, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 	assert.NotNil(t, got)
 }
 
@@ -94,7 +94,7 @@ func Test_nacosRegistry_Register(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithCluster("DEFAULT_GROUP"))
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 			if err := n.Register(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -135,7 +135,7 @@ func Test_nacosRegistry_Deregister(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithCluster("DEFAULT_GROUP"))
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 			if err := n.Deregister(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Deregister() error = %v, wantErr %v", err, tt.wantErr)
 			}

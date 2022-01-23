@@ -47,6 +47,7 @@ type nacosRegistry struct {
 	opts options
 }
 
+// NewNacosRegistry create a new registry using nacos.
 func NewNacosRegistry(cli naming_client.INamingClient, opts ...Option) registry.Registry {
 	op := options{
 		cluster: "DEFAULT",
@@ -60,6 +61,7 @@ func NewNacosRegistry(cli naming_client.INamingClient, opts ...Option) registry.
 
 var _ registry.Registry = (*nacosRegistry)(nil)
 
+// Register service info to nacos.
 func (n *nacosRegistry) Register(info *registry.Info) error {
 	if info == nil {
 		return fmt.Errorf("registry.Info can not be empty")
@@ -118,6 +120,7 @@ func (n *nacosRegistry) getLocalIpv4Host() (string, error) {
 	return "", fmt.Errorf("not found ipv4 address")
 }
 
+// Deregister a service info from nacos.
 func (n *nacosRegistry) Deregister(info *registry.Info) error {
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {

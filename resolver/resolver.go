@@ -47,6 +47,7 @@ type nacosResolver struct {
 	opts options
 }
 
+// NewNacosResolver create a service resolver using nacos.
 func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery.Resolver {
 	op := options{
 		cluster: "DEFAULT",
@@ -62,6 +63,7 @@ func (n *nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (
 	return target.ServiceName()
 }
 
+// Resolve a serice info by desc.
 func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Result, error) {
 	res, err := n.cli.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: desc,
