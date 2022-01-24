@@ -96,6 +96,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Metadata:    info.Tags,
 		GroupName:   n.opts.group,
 		ClusterName: n.opts.cluster,
+		Ephemeral:   true,
 	})
 	if e != nil {
 		return fmt.Errorf("register instance err:%w", e)
@@ -140,6 +141,9 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 		Ip:          host,
 		Port:        uint64(p),
 		ServiceName: info.ServiceName,
+		Ephemeral:   true,
+		GroupName:   n.opts.group,
+		Cluster:     n.opts.cluster,
 	}); err != nil {
 		return err
 	}
