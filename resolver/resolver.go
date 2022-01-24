@@ -63,7 +63,7 @@ func (n *nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (
 	return target.ServiceName()
 }
 
-// Resolve a serice info by desc.
+// Resolve a service info by desc.
 func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Result, error) {
 	res, err := n.cli.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: desc,
