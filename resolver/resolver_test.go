@@ -49,6 +49,7 @@ func init() {
 	if err != nil {
 		return
 	}
+	time.Sleep(time.Second)
 	err = nacosregistry.NewNacosRegistry(cli).Register(svcInfo)
 	if err != nil {
 		return
