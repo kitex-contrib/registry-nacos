@@ -34,7 +34,7 @@ import (
 var (
 	nacosCli naming_client.INamingClient
 	svcName  = "demo.kitex-contrib.local"
-	svcAddr  = net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848}
+	svcAddr  = net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}
 	svcInfo  = &registry.Info{
 		ServiceName: svcName,
 		Addr:        &svcAddr,
@@ -82,7 +82,7 @@ func getNacosClient() (naming_client.INamingClient, error) {
 	)
 }
 
-func Test_nacosResolver_Resolve(t *testing.T) {
+func TestNacosResolverResolve(t *testing.T) {
 	type fields struct {
 		cli naming_client.INamingClient
 	}
@@ -138,7 +138,7 @@ func Test_nacosResolver_Resolve(t *testing.T) {
 	}
 }
 
-func Test_nacosResolver_DifferentCluster(t *testing.T) {
+func TestNacosResolverDifferentCluster(t *testing.T) {
 	ctx := context.Background()
 	n := NewNacosResolver(nacosCli)
 	got, err := n.Resolve(ctx, svcName)
@@ -153,8 +153,5 @@ func Test_nacosResolver_DifferentCluster(t *testing.T) {
 	n = NewNacosResolver(nacosCli, WithCluster("OTHER"))
 	_, err = n.Resolve(ctx, svcName)
 	assert.NotNil(t, err)
-	if err == nil {
-		return
-	}
 	assert.Contains(t, err.Error(), "instance list is empty")
 }

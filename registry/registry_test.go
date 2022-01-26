@@ -61,7 +61,7 @@ func TestNewNacosRegistry(t *testing.T) {
 	assert.NotNil(t, got)
 }
 
-func Test_nacosRegistry_Register(t *testing.T) {
+func TestNacosRegistryRegister(t *testing.T) {
 	client, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
@@ -84,7 +84,7 @@ func Test_nacosRegistry_Register(t *testing.T) {
 			fields: fields{client},
 			args: args{info: &registry.Info{
 				ServiceName: "demo.kitex-contrib.local",
-				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848},
+				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080},
 				Weight:      999,
 				StartTime:   time.Now(),
 				Tags:        map[string]string{"env": "local"},
@@ -102,7 +102,7 @@ func Test_nacosRegistry_Register(t *testing.T) {
 	}
 }
 
-func Test_nacosRegistry_Deregister(t *testing.T) {
+func TestNacosRegistryDeregister(t *testing.T) {
 	client, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
@@ -124,7 +124,7 @@ func Test_nacosRegistry_Deregister(t *testing.T) {
 			name: "common",
 			args: args{info: &registry.Info{
 				ServiceName: "demo.kitex-contrib.local",
-				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8848},
+				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080},
 				Weight:      999,
 				StartTime:   time.Now(),
 				Tags:        map[string]string{"env": "local"},
@@ -141,4 +141,80 @@ func Test_nacosRegistry_Deregister(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNacosMultipleInstances(t *testing.T) {
+	var (
+		svcName     = "MultipleInstances"
+		clusterName = "TheCluster"
+		groupName   = "TheGroup"
+	)
+	client, err := getNacosClient()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	time.Sleep(time.Second)
+	got := NewNacosRegistry(client, WithCluster(clusterName), WithGroup(groupName))
+	if !assert.NotNil(t, got) {
+		t.Errorf("err: new registry fail")
+		return
+	}
+	time.Sleep(time.Second)
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
+	})
+	assert.Nil(t, err)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082},
+	})
+	assert.Nil(t, err)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
+	})
+	assert.Nil(t, err)
+
+	time.Sleep(time.Second)
+	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
+		ServiceName: svcName,
+		GroupName:   groupName,
+		Clusters:    []string{clusterName},
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, 3, len(res), "successful register not three")
+
+	time.Sleep(time.Second)
+	err = got.Deregister(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
+	})
+	assert.Nil(t, err)
+
+	time.Sleep(time.Second)
+	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
+		ServiceName: svcName,
+		GroupName:   groupName,
+		Clusters:    []string{clusterName},
+	})
+	assert.Nil(t, err)
+	if assert.Equal(t, 2, len(res), "deregister one, instances num should be two") {
+		for _, i := range res {
+			assert.Equal(t, "127.0.0.1", i.Ip)
+			assert.Contains(t, []uint64{8081, 8082}, i.Port)
+		}
+	}
+
 }

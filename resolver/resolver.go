@@ -59,6 +59,7 @@ func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery
 	return &nacosResolver{cli: cli, opts: op}
 }
 
+// Target return a description for the given target that is suitable for being a key for cache.
 func (n *nacosResolver) Target(_ context.Context, target rpcinfo.EndpointInfo) (description string) {
 	return target.ServiceName()
 }
@@ -74,7 +75,10 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 	if err != nil {
 		return discovery.Result{}, err
 	}
-	var instances []discovery.Instance
+	if len(res) == 0 {
+		return discovery.Result{}, fmt.Errorf("no instance remains for %v", desc)
+	}
+	instances := make([]discovery.Instance, 0, len(res))
 	for _, in := range res {
 		if !in.Enable {
 			continue
@@ -86,6 +90,9 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 			in.Metadata),
 		)
 	}
+	if len(instances) == 0 {
+		return discovery.Result{}, fmt.Errorf("no instance remains for %v", desc)
+	}
 	return discovery.Result{
 		Cacheable: true,
 		CacheKey:  desc,
@@ -93,10 +100,12 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 	}, nil
 }
 
+// Diff computes the difference between two results.
 func (n *nacosResolver) Diff(cacheKey string, prev, next discovery.Result) (discovery.Change, bool) {
 	return discovery.DefaultDiff(cacheKey, prev, next)
 }
 
+// Name returns the name of the resolver.
 func (n *nacosResolver) Name() string {
 	return "nacos"
 }

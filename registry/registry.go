@@ -15,6 +15,7 @@
 package registry
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strconv"
@@ -64,13 +65,13 @@ var _ registry.Registry = (*nacosRegistry)(nil)
 // Register service info to nacos.
 func (n *nacosRegistry) Register(info *registry.Info) error {
 	if info == nil {
-		return fmt.Errorf("registry.Info can not be empty")
+		return errors.New("registry.Info can not be empty")
 	}
 	if info.ServiceName == "" {
-		return fmt.Errorf("registry.Info ServiceName can not be empty")
+		return errors.New("registry.Info ServiceName can not be empty")
 	}
 	if info.Addr == nil {
-		return fmt.Errorf("registry.Info Addr can not be empty")
+		return errors.New("registry.Info Addr can not be empty")
 	}
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {
@@ -78,12 +79,12 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 	}
 	p, err := strconv.Atoi(port)
 	if err != nil {
-		return fmt.Errorf("parse registry info port error:%w", err)
+		return fmt.Errorf("parse registry info port error: %w", err)
 	}
 	if host == "" {
 		host, err = n.getLocalIpv4Host()
 		if err != nil {
-			return fmt.Errorf("parse registry info addr error:%w", err)
+			return fmt.Errorf("parse registry info addr error: %w", err)
 		}
 	}
 	_, e := n.cli.RegisterInstance(vo.RegisterInstanceParam{
@@ -99,7 +100,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Ephemeral:   true,
 	})
 	if e != nil {
-		return fmt.Errorf("register instance err:%w", e)
+		return fmt.Errorf("register instance error: %w", e)
 	}
 	return nil
 }

@@ -56,11 +56,10 @@ func main() {
 	newClient := hello.MustNewClient(
 		"Hello",
 		client.WithResolver(resolver.NewNacosResolver(cli)),
+		client.WithRPCTimeout(time.Second*3),
 	)
 	for {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-		resp, err := newClient.Echo(ctx, &api.Request{Message: "Hello"})
-		cancel()
+		resp, err := newClient.Echo(context.Background(), &api.Request{Message: "Hello"})
 		if err != nil {
 			log.Fatal(err)
 		}
