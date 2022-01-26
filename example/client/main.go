@@ -41,7 +41,7 @@ func main() {
 		CacheDir:            "/tmp/nacos/cache",
 		RotateTime:          "1h",
 		MaxAge:              3,
-		LogLevel:            "debug",
+		LogLevel:            "info",
 	}
 
 	cli, err := clients.NewNamingClient(

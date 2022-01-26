@@ -51,7 +51,7 @@ func main() {
 		CacheDir:            "/tmp/nacos/cache",
 		RotateTime:          "1h",
 		MaxAge:              3,
-		LogLevel:            "debug",
+		LogLevel:            "info",
 	}
 
 	cli, err := clients.NewNamingClient(
@@ -68,7 +68,7 @@ func main() {
 		new(HelloImpl),
 		server.WithRegistry(registry.NewNacosRegistry(cli)),
 		server.WithRegistryInfo(&kitexregistry.Info{ServiceName: "Hello"}),
-		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8888}),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
 	)
 	if err := svr.Run(); err != nil {
 		log.Println("server stopped with error:", err)

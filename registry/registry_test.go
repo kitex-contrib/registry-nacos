@@ -216,5 +216,4 @@ func TestNacosMultipleInstances(t *testing.T) {
 			assert.Contains(t, []uint64{8081, 8082}, i.Port)
 		}
 	}
-
 }
