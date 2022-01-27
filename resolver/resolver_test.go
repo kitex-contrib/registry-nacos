@@ -82,6 +82,7 @@ func getNacosClient() (naming_client.INamingClient, error) {
 	)
 }
 
+// TestNacosResolverResolve test Resolve a service
 func TestNacosResolverResolve(t *testing.T) {
 	type fields struct {
 		cli naming_client.INamingClient
@@ -138,6 +139,7 @@ func TestNacosResolverResolve(t *testing.T) {
 	}
 }
 
+// TestNacosResolverDifferentCluster test NewNacosResolver WithCluster option
 func TestNacosResolverDifferentCluster(t *testing.T) {
 	ctx := context.Background()
 	n := NewNacosResolver(nacosCli)

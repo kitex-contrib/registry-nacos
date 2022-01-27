@@ -51,6 +51,7 @@ func getNacosClient() (naming_client.INamingClient, error) {
 	)
 }
 
+// TestNewNacosRegistry test new a nacos registry
 func TestNewNacosRegistry(t *testing.T) {
 	client, err := getNacosClient()
 	if err != nil {
@@ -61,6 +62,7 @@ func TestNewNacosRegistry(t *testing.T) {
 	assert.NotNil(t, got)
 }
 
+// TestNewNacosRegistry test registry a service
 func TestNacosRegistryRegister(t *testing.T) {
 	client, err := getNacosClient()
 	if err != nil {
@@ -102,6 +104,7 @@ func TestNacosRegistryRegister(t *testing.T) {
 	}
 }
 
+// TestNacosRegistryDeregister test deregister a service
 func TestNacosRegistryDeregister(t *testing.T) {
 	client, err := getNacosClient()
 	if err != nil {
@@ -143,6 +146,7 @@ func TestNacosRegistryDeregister(t *testing.T) {
 	}
 }
 
+// TestNacosMultipleInstances test registry multiple service,then deregister one
 func TestNacosMultipleInstances(t *testing.T) {
 	var (
 		svcName     = "MultipleInstances"

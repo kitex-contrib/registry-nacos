@@ -75,7 +75,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 	}
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {
-		return fmt.Errorf("parse registry info addr error:%w", err)
+		return fmt.Errorf("parse registry info addr error: %w", err)
 	}
 	p, err := strconv.Atoi(port)
 	if err != nil {
@@ -119,7 +119,7 @@ func (n *nacosRegistry) getLocalIpv4Host() (string, error) {
 			}
 		}
 	}
-	return "", fmt.Errorf("not found ipv4 address")
+	return "", errors.New("not found ipv4 address")
 }
 
 // Deregister a service info from nacos.
@@ -130,12 +130,12 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 	}
 	p, err := strconv.Atoi(port)
 	if err != nil {
-		return fmt.Errorf("parse registry info port error:%w", err)
+		return fmt.Errorf("parse registry info port error: %w", err)
 	}
 	if host == "" {
 		host, err = n.getLocalIpv4Host()
 		if err != nil {
-			return fmt.Errorf("parse registry info addr error:%w", err)
+			return fmt.Errorf("parse registry info addr error: %w", err)
 		}
 	}
 	if _, err = n.cli.DeregisterInstance(vo.DeregisterInstanceParam{
