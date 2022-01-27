@@ -1,6 +1,6 @@
 name: Push Check
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
@@ -19,6 +19,10 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      - name: Prepare Nacos
+        run: |
+          make prepare
 
       - name: Check License Header
         uses: apache/skywalking-eyes@main
