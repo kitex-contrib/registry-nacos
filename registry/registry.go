@@ -20,6 +20,8 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/kitex-contrib/registry-nacos/nacos"
+
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/vo"
@@ -46,6 +48,15 @@ func WithGroup(group string) Option {
 type nacosRegistry struct {
 	cli  naming_client.INamingClient
 	opts options
+}
+
+// NewDefaultNacosRegistry create a default service registry using nacos.
+func NewDefaultNacosRegistry() (registry.Registry, error) {
+	cli, err := nacos.NewNacosClient()
+	if err != nil {
+		return nil, err
+	}
+	return NewNacosRegistry(cli), nil
 }
 
 // NewNacosRegistry create a new registry using nacos.

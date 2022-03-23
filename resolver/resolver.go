@@ -20,6 +20,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/registry-nacos/nacos"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
@@ -45,6 +46,15 @@ func WithGroup(group string) Option {
 type nacosResolver struct {
 	cli  naming_client.INamingClient
 	opts options
+}
+
+// NewDefaultNacosResolver create a default service resolver using nacos.
+func NewDefaultNacosResolver() (discovery.Resolver, error) {
+	cli, err := nacos.NewNacosClient()
+	if err != nil {
+		return nil, err
+	}
+	return NewNacosResolver(cli), nil
 }
 
 // NewNacosResolver create a service resolver using nacos.
