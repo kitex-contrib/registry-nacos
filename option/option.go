@@ -19,6 +19,7 @@ type Options struct {
 	group   string
 }
 
+// NewOptions returns a new Options instance.
 func NewOptions(cluster, group string) Options {
 	return Options{
 		cluster: cluster,
