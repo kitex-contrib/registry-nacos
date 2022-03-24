@@ -16,11 +16,12 @@ package resolver
 
 import (
 	"context"
-	"github.com/kitex-contrib/registry-nacos/option"
 	"net"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/kitex-contrib/registry-nacos/option"
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/registry"

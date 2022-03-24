@@ -17,6 +17,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+
 	"github.com/kitex-contrib/registry-nacos/option"
 
 	"github.com/cloudwego/kitex/pkg/discovery"

@@ -15,10 +15,11 @@
 package registry
 
 import (
-	"github.com/kitex-contrib/registry-nacos/option"
 	"net"
 	"testing"
 	"time"
+
+	"github.com/kitex-contrib/registry-nacos/option"
 
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
