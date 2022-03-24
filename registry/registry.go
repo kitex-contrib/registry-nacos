@@ -17,6 +17,7 @@ package registry
 import (
 	"errors"
 	"fmt"
+	"github.com/kitex-contrib/registry-nacos/option"
 	"net"
 	"strconv"
 
@@ -25,35 +26,14 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-type options struct {
-	cluster string
-	group   string
-}
-
-// Option is nacos option.
-type Option func(o *options)
-
-// WithCluster with cluster option.
-func WithCluster(cluster string) Option {
-	return func(o *options) { o.cluster = cluster }
-}
-
-// WithGroup with group option.
-func WithGroup(group string) Option {
-	return func(o *options) { o.group = group }
-}
-
 type nacosRegistry struct {
 	cli  naming_client.INamingClient
-	opts options
+	opts option.Options
 }
 
 // NewNacosRegistry create a new registry using nacos.
-func NewNacosRegistry(cli naming_client.INamingClient, opts ...Option) registry.Registry {
-	op := options{
-		cluster: "DEFAULT",
-		group:   "DEFAULT_GROUP",
-	}
+func NewNacosRegistry(cli naming_client.INamingClient, opts ...option.Option) registry.Registry {
+	op := option.NewOptions("DEFAULT", "DEFAULT_GROUP")
 	for _, option := range opts {
 		option(&op)
 	}
@@ -95,8 +75,8 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Enable:      true,
 		Healthy:     true,
 		Metadata:    info.Tags,
-		GroupName:   n.opts.group,
-		ClusterName: n.opts.cluster,
+		GroupName:   n.opts.GetGroup(),
+		ClusterName: n.opts.GetCluster(),
 		Ephemeral:   true,
 	})
 	if e != nil {
@@ -143,8 +123,8 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 		Port:        uint64(p),
 		ServiceName: info.ServiceName,
 		Ephemeral:   true,
-		GroupName:   n.opts.group,
-		Cluster:     n.opts.cluster,
+		GroupName:   n.opts.GetGroup(),
+		Cluster:     n.opts.GetCluster(),
 	}); err != nil {
 		return err
 	}

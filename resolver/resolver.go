@@ -17,6 +17,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"github.com/kitex-contrib/registry-nacos/option"
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -24,35 +25,14 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-type options struct {
-	cluster string
-	group   string
-}
-
-// Option is nacos option.
-type Option func(o *options)
-
-// WithCluster with cluster option.
-func WithCluster(cluster string) Option {
-	return func(o *options) { o.cluster = cluster }
-}
-
-// WithGroup with group option.
-func WithGroup(group string) Option {
-	return func(o *options) { o.group = group }
-}
-
 type nacosResolver struct {
 	cli  naming_client.INamingClient
-	opts options
+	opts option.Options
 }
 
 // NewNacosResolver create a service resolver using nacos.
-func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery.Resolver {
-	op := options{
-		cluster: "DEFAULT",
-		group:   "DEFAULT_GROUP",
-	}
+func NewNacosResolver(cli naming_client.INamingClient, opts ...option.Option) discovery.Resolver {
+	op := option.NewOptions("DEFAULT", "DEFAULT_GROUP")
 	for _, option := range opts {
 		option(&op)
 	}
@@ -69,8 +49,8 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 	res, err := n.cli.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: desc,
 		HealthyOnly: true,
-		GroupName:   n.opts.group,
-		Clusters:    []string{n.opts.cluster},
+		GroupName:   n.opts.GetGroup(),
+		Clusters:    []string{n.opts.GetCluster()},
 	})
 	if err != nil {
 		return discovery.Result{}, err

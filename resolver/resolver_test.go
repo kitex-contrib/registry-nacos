@@ -16,6 +16,7 @@ package resolver
 
 import (
 	"context"
+	"github.com/kitex-contrib/registry-nacos/option"
 	"net"
 	"strings"
 	"testing"
@@ -152,7 +153,7 @@ func TestNacosResolverDifferentCluster(t *testing.T) {
 		assert.Equal(t, gotSvc.Address().String(), svcAddr.String())
 	}
 
-	n = NewNacosResolver(nacosCli, WithCluster("OTHER"))
+	n = NewNacosResolver(nacosCli, option.WithCluster("OTHER"))
 	_, err = n.Resolve(ctx, svcName)
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "instance list is empty")
