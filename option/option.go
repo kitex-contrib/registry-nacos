@@ -17,5 +17,5 @@ package option
 // Options is a base type.
 type Options struct {
 	Cluster string
-	Group 	string
+	Group   string
 }

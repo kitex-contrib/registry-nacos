@@ -17,6 +17,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+
 	"github.com/kitex-contrib/registry-nacos/option"
 
 	"github.com/cloudwego/kitex/pkg/discovery"
@@ -35,7 +36,7 @@ func NewNacosResolver(cli naming_client.INamingClient, opts ...Option) discovery
 	op := resolverOptions{
 		option.Options{
 			Cluster: "DEFAULT",
-			Group: "DEFAULT_GROUP",
+			Group:   "DEFAULT_GROUP",
 		},
 	}
 	for _, option := range opts {
