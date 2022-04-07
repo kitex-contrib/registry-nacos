@@ -80,13 +80,6 @@ func getNacosClient() (naming_client.INamingClient, error) {
 	)
 }
 
-// TestNewDefaultNacosResolver test new a default nacos resolver
-func TestNewDefaultNacosResolver(t *testing.T) {
-	r, err := NewDefaultNacosResolver()
-	assert.Nil(t, err)
-	assert.NotNil(t, r)
-}
-
 // TestNacosResolverResolve test Resolve a service
 func TestNacosResolverResolve(t *testing.T) {
 	type fields struct {

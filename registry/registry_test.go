@@ -60,13 +60,6 @@ func TestNewNacosRegistry(t *testing.T) {
 	assert.NotNil(t, got)
 }
 
-// TestNewDefaultNacosRegistry test new a default nacos registry
-func TestNewDefaultNacosRegistry(t *testing.T) {
-	r, err := NewDefaultNacosRegistry()
-	assert.Nil(t, err)
-	assert.NotNil(t, r)
-}
-
 // TestNewNacosRegistry test registry a service
 func TestNacosRegistryRegister(t *testing.T) {
 	client, err := getNacosClient()
@@ -212,7 +205,7 @@ func TestNacosMultipleInstances(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 3)
 	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
@@ -225,4 +218,11 @@ func TestNacosMultipleInstances(t *testing.T) {
 			assert.Contains(t, []uint64{8081, 8082}, i.Port)
 		}
 	}
+}
+
+// TestNewDefaultNacosRegistry test new a default nacos registry
+func TestNewDefaultNacosRegistry(t *testing.T) {
+	r, err := NewDefaultNacosRegistry()
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
 }
