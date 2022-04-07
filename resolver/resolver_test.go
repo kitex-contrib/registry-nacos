@@ -23,6 +23,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/registry"
+	"github.com/kitex-contrib/registry-nacos/nacos"
 	nacosregistry "github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
@@ -67,9 +68,8 @@ func getNacosClient() (naming_client.INamingClient, error) {
 		NamespaceId:         "public",
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
 		CacheDir:            "/tmp/nacos/cache",
-		LogLevel:            "debug",
+		CustomLogger:        nacos.NewCustomNacosLogger(),
 	}
 
 	return clients.NewNamingClient(
