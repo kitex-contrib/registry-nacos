@@ -80,14 +80,25 @@ func getNacosClient() (naming_client.INamingClient, error) {
 	)
 }
 
+// TestNewDefaultNacosResolver test new a default nacos resolver
+func TestNewDefaultNacosResolver(t *testing.T) {
+	r, err := NewDefaultNacosResolver()
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
+}
+
 // TestNacosResolverResolve test Resolve a service
 func TestNacosResolverResolve(t *testing.T) {
+	type fields struct {
+		cli naming_client.INamingClient
+	}
 	type args struct {
 		ctx  context.Context
 		desc string
 	}
 	tests := []struct {
 		name    string
+		fields  fields
 		args    args
 		want    discovery.Result
 		wantErr bool
@@ -98,6 +109,7 @@ func TestNacosResolverResolve(t *testing.T) {
 				ctx:  context.Background(),
 				desc: svcName,
 			},
+			fields: fields{cli: nacosCli},
 		},
 		{
 			name: "wrong desc",
@@ -105,15 +117,15 @@ func TestNacosResolverResolve(t *testing.T) {
 				ctx:  context.Background(),
 				desc: "xxxx.kitex-contrib.local",
 			},
+			fields:  fields{cli: nacosCli},
 			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n, err := NewDefaultNacosResolver()
-			assert.Nil(t, err)
-			_, err = n.Resolve(tt.args.ctx, tt.args.desc)
+			n := NewNacosResolver(tt.fields.cli)
+			_, err := n.Resolve(tt.args.ctx, tt.args.desc)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Resolve() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -124,9 +136,8 @@ func TestNacosResolverResolve(t *testing.T) {
 			}
 		})
 	}
-	r, err := nacosregistry.NewDefaultNacosRegistry()
-	assert.Nil(t, err)
-	err = r.Deregister(svcInfo)
+
+	err := nacosregistry.NewNacosRegistry(nacosCli).Deregister(svcInfo)
 	if err != nil {
 		t.Errorf("Deregister Fail")
 		return

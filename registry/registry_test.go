@@ -51,23 +51,44 @@ func getNacosClient() (naming_client.INamingClient, error) {
 
 // TestNewNacosRegistry test new a nacos registry
 func TestNewNacosRegistry(t *testing.T) {
-	got, err := NewDefaultNacosRegistry()
-	assert.Nil(t, err)
+	client, err := getNacosClient()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	got := NewNacosRegistry(client, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
 	assert.NotNil(t, got)
+}
+
+// TestNewDefaultNacosRegistry test new a default nacos registry
+func TestNewDefaultNacosRegistry(t *testing.T) {
+	r, err := NewDefaultNacosRegistry()
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
 }
 
 // TestNewNacosRegistry test registry a service
 func TestNacosRegistryRegister(t *testing.T) {
+	client, err := getNacosClient()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	type fields struct {
+		cli naming_client.INamingClient
+	}
 	type args struct {
 		info *registry.Info
 	}
 	tests := []struct {
 		name    string
+		fields  fields
 		args    args
 		wantErr bool
 	}{
 		{
-			name: "common",
+			name:   "common",
+			fields: fields{client},
 			args: args{info: &registry.Info{
 				ServiceName: "demo.kitex-contrib.local",
 				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080},
@@ -80,9 +101,8 @@ func TestNacosRegistryRegister(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n, err := NewDefaultNacosRegistry()
-			assert.Nil(t, err)
-			if err = n.Register(tt.args.info); (err != nil) != tt.wantErr {
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
+			if err := n.Register(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -91,11 +111,20 @@ func TestNacosRegistryRegister(t *testing.T) {
 
 // TestNacosRegistryDeregister test deregister a service
 func TestNacosRegistryDeregister(t *testing.T) {
+	client, err := getNacosClient()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	type fields struct {
+		cli naming_client.INamingClient
+	}
 	type args struct {
 		info *registry.Info
 	}
 	tests := []struct {
 		name    string
+		fields  fields
 		args    args
 		wantErr bool
 	}{
@@ -108,14 +137,14 @@ func TestNacosRegistryDeregister(t *testing.T) {
 				StartTime:   time.Now(),
 				Tags:        map[string]string{"env": "local"},
 			}},
+			fields:  fields{client},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			n, err := NewDefaultNacosRegistry()
-			assert.Nil(t, err)
-			if err = n.Deregister(tt.args.info); (err != nil) != tt.wantErr {
+			n := NewNacosRegistry(tt.fields.cli, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
+			if err := n.Deregister(tt.args.info); (err != nil) != tt.wantErr {
 				t.Errorf("Deregister() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
