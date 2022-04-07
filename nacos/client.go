@@ -27,9 +27,10 @@ func NewNacosClient() (naming_client.INamingClient, error) {
 		*constant.NewServerConfig(NacosAddr(), uint64(NacosPort())),
 	}
 	cc := constant.ClientConfig{
-		NamespaceId:  NacosNameSpaceId(),
-		RegionId:     NacosDefaultRegionId,
-		CustomLogger: NewCustomNaocsLogger(),
+		NamespaceId:         NacosNameSpaceId(),
+		RegionId:            NacosDefaultRegionId,
+		NotLoadCacheAtStart: true,
+		CustomLogger:        NewCustomNaocsLogger(),
 	}
 	cli, err := clients.NewNamingClient(
 		vo.NacosClientParam{

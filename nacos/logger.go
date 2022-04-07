@@ -26,15 +26,15 @@ func NewCustomNaocsLogger() logger.Logger {
 }
 
 func (m customNaocsLogger) Info(args ...interface{}) {
-	klog.Info(args)
+	klog.Info(args...)
 }
 
 func (m customNaocsLogger) Warn(args ...interface{}) {
-	klog.Warn(args)
+	klog.Warn(args...)
 }
 
 func (m customNaocsLogger) Error(args ...interface{}) {
-	klog.Error(args)
+	klog.Error(args...)
 }
 
 func (m customNaocsLogger) Debug(args ...interface{}) {
@@ -42,17 +42,17 @@ func (m customNaocsLogger) Debug(args ...interface{}) {
 }
 
 func (m customNaocsLogger) Infof(fmt string, args ...interface{}) {
-	klog.Infof(fmt, args)
+	klog.Infof(fmt, args...)
 }
 
 func (m customNaocsLogger) Warnf(fmt string, args ...interface{}) {
-	klog.Warnf(fmt, args)
+	klog.Warnf(fmt, args...)
 }
 
 func (m customNaocsLogger) Errorf(fmt string, args ...interface{}) {
-	klog.Errorf(fmt, args)
+	klog.Errorf(fmt, args...)
 }
 
 func (m customNaocsLogger) Debugf(fmt string, args ...interface{}) {
-	klog.Debugf(fmt, args)
+	klog.Debugf(fmt, args...)
 }
