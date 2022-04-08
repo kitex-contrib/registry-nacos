@@ -21,14 +21,14 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-// NewNacosClient Create a Nacos client
-func NewNacosClient() (naming_client.INamingClient, error) {
+// NewDefaultNacosClient Create a default Nacos client
+func NewDefaultNacosClient() (naming_client.INamingClient, error) {
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig(NacosAddr(), uint64(NacosPort())),
 	}
 	cc := constant.ClientConfig{
 		NamespaceId:         NacosNameSpaceId(),
-		RegionId:            NacosDefaultRegionId,
+		RegionId:            NACOS_DEFAULT_REGIONID,
 		NotLoadCacheAtStart: true,
 		CustomLogger:        NewCustomNacosLogger(),
 	}

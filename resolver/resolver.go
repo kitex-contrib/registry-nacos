@@ -50,7 +50,7 @@ type nacosResolver struct {
 
 // NewDefaultNacosResolver create a default service resolver using nacos.
 func NewDefaultNacosResolver() (discovery.Resolver, error) {
-	cli, err := nacos.NewNacosClient()
+	cli, err := nacos.NewDefaultNacosClient()
 	if err != nil {
 		return nil, err
 	}

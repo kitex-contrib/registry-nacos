@@ -51,7 +51,7 @@ type nacosRegistry struct {
 
 // NewDefaultNacosRegistry create a default service registry using nacos.
 func NewDefaultNacosRegistry() (registry.Registry, error) {
-	cli, err := nacos.NewNacosClient()
+	cli, err := nacos.NewDefaultNacosClient()
 	if err != nil {
 		return nil, err
 	}

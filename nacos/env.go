@@ -22,38 +22,38 @@ import (
 )
 
 const (
-	NacosEnvServiceAddr     = "serviceAddr"
-	NacosEnvPort            = "servicePort"
-	NacosEnvNameSpaceId     = "namespace"
-	NacosDefaultServiceAddr = "127.0.0.1"
-	NacosDefaultPort        = 8848
-	NacosDefaultRegionId    = "cn-hangzhou"
+	NACOS_ENV_SERVICE_ADDR     = "serviceAddr"
+	NACOS_ENV_PORT             = "servicePort"
+	NACOS_ENV_NAMESPACE_ID     = "namespace"
+	NACOS_DEFAULT_SERVICE_ADDR = "127.0.0.1"
+	NACOS_DEFAULT_PORT         = 8848
+	NACOS_DEFAULT_REGIONID     = "cn-hangzhou"
 )
 
 // NacosPort Get Nacos port from environment variables
 func NacosPort() int64 {
-	portText := os.Getenv(NacosEnvPort)
+	portText := os.Getenv(NACOS_ENV_PORT)
 	if len(portText) == 0 {
-		return NacosDefaultPort
+		return NACOS_DEFAULT_PORT
 	}
 	port, err := strconv.ParseInt(portText, 10, 64)
 	if err != nil {
-		klog.Errorf("ParseInt failed,err=%+v", err)
-		return NacosDefaultPort
+		klog.Errorf("ParseInt failed,err:%+v", err)
+		return NACOS_DEFAULT_PORT
 	}
 	return port
 }
 
 // NacosAddr Get Nacos addr from environment variables
 func NacosAddr() string {
-	addr := os.Getenv(NacosEnvServiceAddr)
+	addr := os.Getenv(NACOS_ENV_SERVICE_ADDR)
 	if len(addr) == 0 {
-		return NacosDefaultServiceAddr
+		return NACOS_DEFAULT_SERVICE_ADDR
 	}
 	return addr
 }
 
 // NacosNameSpaceId Get Nacos namespace id from environment variables
 func NacosNameSpaceId() string {
-	return os.Getenv(NacosEnvNameSpaceId)
+	return os.Getenv(NACOS_ENV_NAMESPACE_ID)
 }

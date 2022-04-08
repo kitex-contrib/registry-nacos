@@ -60,6 +60,18 @@ func main() {
     // ...
 }
 ```
+
+
+## Environment Variable
+
+| Environment Variable Name | Environment Variable Default Value | Environment Variable Introduction |
+| ------------------------- | ---------------------------------- | --------------------------------- |
+| serviceAddr               | 127.0.0.1                          | nacos server address              |
+| servicePort               | 8848                               | nacos server port                 |
+| namespace                 |                                    | the namespaceId of nacos          |
+
+
+
 ## Compatibility
 The server of Nacos2.0 is fully compatible with 1.X nacos-sdk-go. [see](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
 
