@@ -50,12 +50,12 @@ type nacosRegistry struct {
 }
 
 // NewDefaultNacosRegistry create a default service registry using nacos.
-func NewDefaultNacosRegistry() (registry.Registry, error) {
+func NewDefaultNacosRegistry(opts ...Option) (registry.Registry, error) {
 	cli, err := nacos.NewDefaultNacosClient()
 	if err != nil {
 		return nil, err
 	}
-	return NewNacosRegistry(cli), nil
+	return NewNacosRegistry(cli, opts...), nil
 }
 
 // NewNacosRegistry create a new registry using nacos.

@@ -49,12 +49,12 @@ type nacosResolver struct {
 }
 
 // NewDefaultNacosResolver create a default service resolver using nacos.
-func NewDefaultNacosResolver() (discovery.Resolver, error) {
+func NewDefaultNacosResolver(opts ...Option) (discovery.Resolver, error) {
 	cli, err := nacos.NewDefaultNacosClient()
 	if err != nil {
 		return nil, err
 	}
-	return NewNacosResolver(cli), nil
+	return NewNacosResolver(cli, opts...), nil
 }
 
 // NewNacosResolver create a service resolver using nacos.
