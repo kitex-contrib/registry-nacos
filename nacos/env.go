@@ -38,7 +38,7 @@ func NacosPort() int64 {
 	}
 	port, err := strconv.ParseInt(portText, 10, 64)
 	if err != nil {
-		klog.Errorf("ParseInt failed,err:%+v", err)
+		klog.Errorf("ParseInt failed,err:%s", err.Error())
 		return NACOS_DEFAULT_PORT
 	}
 	return port
