@@ -267,7 +267,7 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 1)
 	client, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
