@@ -40,6 +40,10 @@ jobs:
 
       - name: Unit Test
         run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+        env:
+          serviceAddr: 127.0.0.1
+          serverPort: 8848
+          namespace: test
 
       - name: Benchmark
         run: go test -bench=. -benchmem -run=none ./...

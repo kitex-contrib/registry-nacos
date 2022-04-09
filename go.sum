@@ -105,8 +105,6 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJ
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9AWI=
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
-github.com/nacos-group/nacos-sdk-go v1.1.2-0.20220406105727-c23c0c2d0ada h1:t3yiHH0WAkhD004y88gUDp9kirGdwlcJdFkpPZF1QAw=
-github.com/nacos-group/nacos-sdk-go v1.1.2-0.20220406105727-c23c0c2d0ada/go.mod h1:I8Vj4M8ZLpBk7EY2A8RXQE1SbfCA7b56TJBPIFTrUYE=
 github.com/nacos-group/nacos-sdk-go v1.1.2-0.20220407143335-bff55a2174fc h1:LthZEk7zqBiWrmVk9G2/Qfq4Z63ob3OzCJL60kxsCWU=
 github.com/nacos-group/nacos-sdk-go v1.1.2-0.20220407143335-bff55a2174fc/go.mod h1:I8Vj4M8ZLpBk7EY2A8RXQE1SbfCA7b56TJBPIFTrUYE=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
