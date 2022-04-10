@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/registry"
+	"github.com/kitex-contrib/registry-nacos/nacos"
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
@@ -36,11 +37,8 @@ func getNacosClient() (naming_client.INamingClient, error) {
 		NamespaceId:         "public",
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
+		CustomLogger:        nacos.NewCustomNacosLogger(),
 		CacheDir:            "/tmp/nacos/cache",
-		RotateTime:          "1h",
-		MaxAge:              3,
-		LogLevel:            "debug",
 	}
 
 	return clients.NewNamingClient(
@@ -207,7 +205,90 @@ func TestNacosMultipleInstances(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
+	time.Sleep(time.Second * 3)
+	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
+		ServiceName: svcName,
+		GroupName:   groupName,
+		Clusters:    []string{clusterName},
+	})
+	assert.Nil(t, err)
+	if assert.Equal(t, 2, len(res), "deregister one, instances num should be two") {
+		for _, i := range res {
+			assert.Equal(t, "127.0.0.1", i.Ip)
+			assert.Contains(t, []uint64{8081, 8082}, i.Port)
+		}
+	}
+}
+
+// TestNewDefaultNacosRegistry test new a default nacos registry
+func TestNewDefaultNacosRegistry(t *testing.T) {
+	r, err := NewDefaultNacosRegistry()
+	assert.Nil(t, err)
+	assert.NotNil(t, r)
+}
+
+// TestNacosMultipleInstancesWithDefaultNacosRegistry use DefaultNacosRegistry to test registry multiple service,then deregister one
+func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
+	var (
+		svcName     = "MultipleInstances"
+		clusterName = "TheCluster"
+		groupName   = "TheGroup"
+	)
+	got, err := NewDefaultNacosRegistry(WithCluster(clusterName), WithGroup(groupName))
+	assert.Nil(t, err)
+	if !assert.NotNil(t, got) {
+		t.Errorf("err: new registry fail")
+		return
+	}
 	time.Sleep(time.Second)
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
+	})
+	assert.Nil(t, err)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082},
+	})
+	assert.Nil(t, err)
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+
+	err = got.Register(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
+	})
+	assert.Nil(t, err)
+
+	time.Sleep(time.Second * 1)
+	client, err := getNacosClient()
+	if err != nil {
+		t.Errorf("err:%v", err)
+		return
+	}
+	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
+		ServiceName: svcName,
+		GroupName:   groupName,
+		Clusters:    []string{clusterName},
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, 3, len(res), "successful register not three")
+
+	time.Sleep(time.Second)
+	err = got.Deregister(&registry.Info{
+		ServiceName: svcName,
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
+	})
+	assert.Nil(t, err)
+
+	time.Sleep(time.Second * 3)
 	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,

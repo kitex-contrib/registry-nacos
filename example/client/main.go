@@ -23,39 +23,16 @@ import (
 	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api/hello"
 	"github.com/cloudwego/kitex/client"
 	"github.com/kitex-contrib/registry-nacos/resolver"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
 func main() {
-	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
-	}
-
-	cc := constant.ClientConfig{
-		NamespaceId:         "public",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		RotateTime:          "1h",
-		MaxAge:              3,
-		LogLevel:            "info",
-	}
-
-	cli, err := clients.NewNamingClient(
-		vo.NacosClientParam{
-			ClientConfig:  &cc,
-			ServerConfigs: sc,
-		},
-	)
+	r, err := resolver.NewDefaultNacosResolver()
 	if err != nil {
 		panic(err)
 	}
 	newClient := hello.MustNewClient(
 		"Hello",
-		client.WithResolver(resolver.NewNacosResolver(cli)),
+		client.WithResolver(r),
 		client.WithRPCTimeout(time.Second*3),
 	)
 	for {

@@ -24,9 +24,6 @@ import (
 	kitexregistry "github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
 type HelloImpl struct{}
@@ -39,34 +36,13 @@ func (h *HelloImpl) Echo(_ context.Context, req *api.Request) (resp *api.Respons
 }
 
 func main() {
-	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
-	}
-
-	cc := constant.ClientConfig{
-		NamespaceId:         "public",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		RotateTime:          "1h",
-		MaxAge:              3,
-		LogLevel:            "info",
-	}
-
-	cli, err := clients.NewNamingClient(
-		vo.NacosClientParam{
-			ClientConfig:  &cc,
-			ServerConfigs: sc,
-		},
-	)
+	r, err := registry.NewDefaultNacosRegistry()
 	if err != nil {
 		panic(err)
 	}
-
 	svr := hello.NewServer(
 		new(HelloImpl),
-		server.WithRegistry(registry.NewNacosRegistry(cli)),
+		server.WithRegistry(r),
 		server.WithRegistryInfo(&kitexregistry.Info{ServiceName: "Hello"}),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
 	)
