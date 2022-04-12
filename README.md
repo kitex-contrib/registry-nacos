@@ -66,8 +66,8 @@ func main() {
 
 | Environment Variable Name | Environment Variable Default Value | Environment Variable Introduction |
 | ------------------------- | ---------------------------------- | --------------------------------- |
-| serviceAddr               | 127.0.0.1                          | nacos server address              |
-| servicePort               | 8848                               | nacos server port                 |
+| serverAddr               | 127.0.0.1                          | nacos server address              |
+| serverPort               | 8848                               | nacos server port                 |
 | namespace                 |                                    | the namespaceId of nacos          |
 
 

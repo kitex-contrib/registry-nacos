@@ -91,7 +91,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 	if err != nil {
 		return fmt.Errorf("parse registry info port error: %w", err)
 	}
-	if host == "" {
+	if host == "" || host == "::" {
 		host, err = n.getLocalIpv4Host()
 		if err != nil {
 			return fmt.Errorf("parse registry info addr error: %w", err)
@@ -142,7 +142,7 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 	if err != nil {
 		return fmt.Errorf("parse registry info port error: %w", err)
 	}
-	if host == "" {
+	if host == "" || host == "::" {
 		host, err = n.getLocalIpv4Host()
 		if err != nil {
 			return fmt.Errorf("parse registry info addr error: %w", err)

@@ -22,12 +22,12 @@ import (
 )
 
 const (
-	NACOS_ENV_SERVICE_ADDR     = "serviceAddr"
-	NACOS_ENV_PORT             = "servicePort"
-	NACOS_ENV_NAMESPACE_ID     = "namespace"
-	NACOS_DEFAULT_SERVICE_ADDR = "127.0.0.1"
-	NACOS_DEFAULT_PORT         = 8848
-	NACOS_DEFAULT_REGIONID     = "cn-hangzhou"
+	NACOS_ENV_SERVER_ADDR     = "serverAddr"
+	NACOS_ENV_PORT            = "serverPort"
+	NACOS_ENV_NAMESPACE_ID    = "namespace"
+	NACOS_DEFAULT_SERVER_ADDR = "127.0.0.1"
+	NACOS_DEFAULT_PORT        = 8848
+	NACOS_DEFAULT_REGIONID    = "cn-hangzhou"
 )
 
 // NacosPort Get Nacos port from environment variables
@@ -46,9 +46,9 @@ func NacosPort() int64 {
 
 // NacosAddr Get Nacos addr from environment variables
 func NacosAddr() string {
-	addr := os.Getenv(NACOS_ENV_SERVICE_ADDR)
+	addr := os.Getenv(NACOS_ENV_SERVER_ADDR)
 	if len(addr) == 0 {
-		return NACOS_DEFAULT_SERVICE_ADDR
+		return NACOS_DEFAULT_SERVER_ADDR
 	}
 	return addr
 }
