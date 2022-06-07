@@ -20,13 +20,12 @@ import (
 )
 
 func main() {
-    // ... 
-    
+    // ...
     r, err := registry.NewDefaultNacosRegistry()
     if err != nil {
         panic(err)
     }
-    
+	
     svr := echo.NewServer(new(EchoImpl), server.WithRegistry(r))
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
@@ -57,12 +56,11 @@ import (
 
 func main() {
     // ... 
-    
-    r, err := resolver.NewDefaultNacosResolver()
+	r, err := resolver.NewDefaultNacosResolver()
     if err != nil {
        panic(err) 
     }
-    
+	
     client, err := echo.NewClient("echo", client.WithResolver(r))
     if err != nil {
         log.Fatal(err)
