@@ -1,5 +1,7 @@
 # registry-nacos (*This is a community driven project*)
 
+[中文](https://github.com/kitex-contrib/registry-nacos/blob/main/README_CN.md)
+
 Nacos as service discovery.
 
 ## How to use?

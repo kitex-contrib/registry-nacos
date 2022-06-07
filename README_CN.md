@@ -1,5 +1,7 @@
 # registry-nacos (*这是一个由社区驱动的项目*)
 
+[English](https://github.com/kitex-contrib/registry-nacos/blob/main/README.md)
+
 使用 **nacos** 作为 **Kitex** 的注册中心
 
 ##  这个项目应当如何使用?
