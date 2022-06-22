@@ -117,7 +117,7 @@ func (n *nacosResolver) Diff(cacheKey string, prev, next discovery.Result) (disc
 
 // Name returns the name of the resolver.
 func (n *nacosResolver) Name() string {
-	return "nacos"
+	return "nacos" + ":" + n.opts.cluster + ":" + n.opts.group
 }
 
 var _ discovery.Resolver = (*nacosResolver)(nil)
