@@ -99,8 +99,8 @@ func main() {
         LogDir:              "/tmp/nacos/log",
         CacheDir:            "/tmp/nacos/cache",
         LogLevel:            "info",
-		Username:            "your-name",
-		Password:            "your-password"
+        Username:            "your-name",
+        Password:            "your-password"
     }
     
     cli, err := clients.NewNamingClient(
@@ -146,8 +146,8 @@ func main() {
             LogDir:              "/tmp/nacos/log",
             CacheDir:            "/tmp/nacos/cache",
             LogLevel:            "info",
-			Username:            "your-name",
-			Password:            "your-password"
+            Username:            "your-name",
+            Password:            "your-password"
     }
     
     cli,err := clients.NewNamingClient(
