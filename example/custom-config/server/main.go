@@ -51,8 +51,6 @@ func main() {
 		LogDir:              "/tmp/nacos/log",
 		CacheDir:            "/tmp/nacos/cache",
 		LogLevel:            "info",
-		// Username:            "test",
-		// Password:            "test",
 		// more ...
 	}
 
