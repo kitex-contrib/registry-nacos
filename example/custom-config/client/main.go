@@ -12,28 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package nacos
+package main
 
 import (
+	"context"
+	"log"
+	"time"
+
+	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api"
+	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api/hello"
+	"github.com/cloudwego/kitex/client"
+	"github.com/kitex-contrib/registry-nacos/resolver"
 	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-// NewDefaultNacosClient Create a default Nacos client
-// It can create a client with default config by env variable.
-// See: env.go
-func NewDefaultNacosClient() (naming_client.INamingClient, error) {
+func main() {
+	// the nacos server config
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig(NacosAddr(), uint64(NacosPort())),
+		*constant.NewServerConfig("127.0.0.1", 8848),
 	}
+
+	// the nacos client config
 	cc := constant.ClientConfig{
-		NamespaceId:         NacosNameSpaceId(),
-		RegionId:            NACOS_DEFAULT_REGIONID,
+		NamespaceId:         "public",
+		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		CustomLogger:        NewCustomNacosLogger(),
+		LogDir:              "/tmp/nacos/log",
+		CacheDir:            "/tmp/nacos/cache",
+		LogLevel:            "info",
+		// Username:            "test",
+		// Password:            "test",
+		// more ...
 	}
+
 	cli, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ClientConfig:  &cc,
@@ -41,7 +54,19 @@ func NewDefaultNacosClient() (naming_client.INamingClient, error) {
 		},
 	)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return cli, nil
+	newClient := hello.MustNewClient(
+		"Hello",
+		client.WithResolver(resolver.NewNacosResolver(cli)),
+		client.WithRPCTimeout(time.Second*3),
+	)
+	for {
+		resp, err := newClient.Echo(context.Background(), &api.Request{Message: "Hello"})
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println(resp)
+		time.Sleep(time.Second)
+	}
 }
