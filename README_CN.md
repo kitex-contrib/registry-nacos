@@ -98,11 +98,9 @@ func main() {
         NotLoadCacheAtStart: true,
         LogDir:              "/tmp/nacos/log",
         CacheDir:            "/tmp/nacos/cache",
-        RotateTime:          "1h",
-        MaxAge:              3,
         LogLevel:            "info",
-        Username:            "test",
-        Password:            "test"
+        Username:            "your-name",
+        Password:            "your-password"
     }
     
     cli, err := clients.NewNamingClient(
@@ -147,11 +145,9 @@ func main() {
             NotLoadCacheAtStart: true,
             LogDir:              "/tmp/nacos/log",
             CacheDir:            "/tmp/nacos/cache",
-            RotateTime:          "1h",
-            MaxAge:              3,
             LogLevel:            "info",
-            Username:            "test",
-            Password:            "test"
+            Username:            "your-name",
+            Password:            "your-password"
     }
     
     cli,err := clients.NewNamingClient(
