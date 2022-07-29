@@ -25,7 +25,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(r))
+    svr := echo.NewServer(
+        new(EchoImpl), 
+        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+        server.WithRegistry(r), 
+	)
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
@@ -102,8 +106,13 @@ func main() {
     if err != nil {
         panic(err)
     }
-    
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(registry.NewNacosRegistry(cli)))
+
+    svr := echo.NewServer(
+        new(EchoImpl),
+        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+        server.WithRegistry(r), 
+    )
+	
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
