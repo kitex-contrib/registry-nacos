@@ -74,14 +74,8 @@ var _ registry.Registry = (*nacosRegistry)(nil)
 
 // Register service info to nacos.
 func (n *nacosRegistry) Register(info *registry.Info) error {
-	if info == nil {
-		return errors.New("registry.Info can not be empty")
-	}
-	if info.ServiceName == "" {
-		return errors.New("registry.Info ServiceName can not be empty")
-	}
-	if info.Addr == nil {
-		return errors.New("registry.Info Addr can not be empty")
+	if err := n.validateRegistryInfo(info); err != nil {
+		return err
 	}
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {
@@ -132,8 +126,25 @@ func (n *nacosRegistry) getLocalIpv4Host() (string, error) {
 	return "", errors.New("not found ipv4 address")
 }
 
+func (n *nacosRegistry) validateRegistryInfo(info *registry.Info) error {
+	if info == nil {
+		return errors.New("registry.Info can not be empty")
+	}
+	if info.ServiceName == "" {
+		return errors.New("registry.Info ServiceName can not be empty")
+	}
+	if info.Addr == nil {
+		return errors.New("registry.Info Addr can not be empty")
+	}
+
+	return nil
+}
+
 // Deregister a service info from nacos.
 func (n *nacosRegistry) Deregister(info *registry.Info) error {
+	if err := n.validateRegistryInfo(info); err != nil {
+		return err
+	}
 	host, port, err := net.SplitHostPort(info.Addr.String())
 	if err != nil {
 		return err
