@@ -16,6 +16,7 @@ import (
     "github.com/nacos-group/nacos-sdk-go/clients/naming_client"
     "github.com/nacos-group/nacos-sdk-go/common/constant"
     "github.com/nacos-group/nacos-sdk-go/vo"
+    "github.com/cloudwego/kitex/pkg/rpcinfo"
     // ...
 )
 
@@ -25,7 +26,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(r))
+    svr := echo.NewServer(
+        new(EchoImpl), 
+        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+        server.WithRegistry(r), 
+	)
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
@@ -74,6 +79,7 @@ import (
     "github.com/nacos-group/nacos-sdk-go/clients/naming_client"
     "github.com/nacos-group/nacos-sdk-go/common/constant"
     "github.com/nacos-group/nacos-sdk-go/vo"
+    "github.com/cloudwego/kitex/pkg/rpcinfo"
     // ...
 )
 func main() {
@@ -102,8 +108,13 @@ func main() {
     if err != nil {
         panic(err)
     }
-    
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(registry.NewNacosRegistry(cli)))
+
+    svr := echo.NewServer(
+        new(EchoImpl),
+        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+        server.WithRegistry(r), 
+    )
+	
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {

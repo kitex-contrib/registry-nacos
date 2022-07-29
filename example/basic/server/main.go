@@ -21,7 +21,7 @@ import (
 
 	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api"
 	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api/hello"
-	kitexregistry "github.com/cloudwego/kitex/pkg/registry"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/registry-nacos/registry"
 )
@@ -43,7 +43,7 @@ func main() {
 	svr := hello.NewServer(
 		new(HelloImpl),
 		server.WithRegistry(r),
-		server.WithRegistryInfo(&kitexregistry.Info{ServiceName: "Hello"}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "Hello"}),
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
 	)
 	if err := svr.Run(); err != nil {
