@@ -8,8 +8,6 @@
 
 ### 服务端
 
-**registry-nacos/example/server/main.go**
-
 ```go
 import (
     // ...
@@ -42,9 +40,9 @@ func main() {
 }
 ```
 
-### 客户端
+更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/server/main.go)
 
-**registry-nacos/example/client/main.go**
+### 客户端
 
 ```go
 import (
@@ -71,9 +69,12 @@ func main() {
 }
 ```
 
+更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/client/main.go)
+
 ## 自定义 Nacos Client 配置
 
 ### 服务端
+
 ```go
 import (
     // ...
@@ -110,8 +111,11 @@ func main() {
     if err != nil {
         panic(err)
     }
-    
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(registry.NewNacosRegistry(cli)))
+
+    svr := echo.NewServer(new(EchoImpl),
+        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+        server.WithRegistry(registry.NewNacosRegistry(cli)),
+    )
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
@@ -121,7 +125,10 @@ func main() {
 }
 ```
 
+更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/server/main.go)
+
 ### 客户端
+
 ```go
 import (
     // ...
@@ -164,6 +171,8 @@ func main() {
     // ...
 }
 ```
+
+更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/client/main.go)
 
 ## 环境变量
 

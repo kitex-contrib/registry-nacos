@@ -8,8 +8,6 @@ Nacos as service discovery.
 
 ### Server
 
-**registry-nacos/example/server/main.go**
-
 ```go
 import (
     // ...
@@ -42,9 +40,9 @@ func main() {
 }
 ```
 
-### Client
+Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/server/main.go) for more usage.
 
-**registry-nacos/example/client/main.go**
+### Client
 
 ```go
 import (
@@ -71,9 +69,12 @@ func main() {
 }
 ```
 
+Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/client/main.go) for more usage.
+
 ## Custom Nacos Client Configuration
 
 ### Server
+
 ```go
 import (
     // ...
@@ -111,7 +112,10 @@ func main() {
         panic(err)
     }
     
-    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(registry.NewNacosRegistry(cli)))
+    svr := echo.NewServer(new(EchoImpl), 
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
+		server.WithRegistry(registry.NewNacosRegistry(cli)),
+    )
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
@@ -121,7 +125,10 @@ func main() {
 }
 ```
 
+Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/server/main.go) for more usage.
+
 ### Client
+
 ```go
 import (
     // ...
@@ -165,6 +172,7 @@ func main() {
 }
 ```
 
+Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/client/main.go) for more usage.
 
 ## Environment Variable
 
