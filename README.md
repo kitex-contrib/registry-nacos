@@ -8,6 +8,8 @@ Nacos as service discovery.
 
 ### Server
 
+**registry-nacos/example/server/main.go**
+
 ```go
 import (
     // ...
@@ -38,10 +40,11 @@ func main() {
     }
     // ...
 }
-
 ```
 
 ### Client
+
+**registry-nacos/example/client/main.go**
 
 ```go
 import (
@@ -79,13 +82,12 @@ import (
     "github.com/nacos-group/nacos-sdk-go/clients/naming_client"
     "github.com/nacos-group/nacos-sdk-go/common/constant"
     "github.com/nacos-group/nacos-sdk-go/vo"
-    "github.com/cloudwego/kitex/pkg/rpcinfo"
     // ...
 )
 func main() {
     // ...
     sc := []constant.ServerConfig{
-	*constant.NewServerConfig("127.0.0.1", 8848),
+        *constant.NewServerConfig("127.0.0.1", 8848),
     }
     
     cc := constant.ClientConfig{
@@ -96,11 +98,11 @@ func main() {
         CacheDir:            "/tmp/nacos/cache",
         LogLevel:            "info",
         Username:            "your-name",
-        Password:            "your-password"
+        Password:            "your-password",
     }
     
     cli, err := clients.NewNamingClient(
-            vo.NacosClientParam{
+        vo.NacosClientParam{
             ClientConfig:  &cc,
             ServerConfigs: sc,
         },
@@ -108,13 +110,8 @@ func main() {
     if err != nil {
         panic(err)
     }
-
-    svr := echo.NewServer(
-        new(EchoImpl),
-        server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "echo"}),
-        server.WithRegistry(r), 
-    )
-	
+    
+    svr := echo.NewServer(new(EchoImpl), server.WithRegistry(registry.NewNacosRegistry(cli)))
     if err := svr.Run(); err != nil {
         log.Println("server stopped with error:", err)
     } else {
@@ -122,7 +119,6 @@ func main() {
     }
     // ...
 }
-
 ```
 
 ### Client
@@ -139,23 +135,25 @@ import (
 func main() {
     // ... 
     sc := []constant.ServerConfig{
-	    *constant.NewServerConfig("127.0.0.1", 8848)}
+	    *constant.NewServerConfig("127.0.0.1", 8848),
+	}
     cc := constant.ClientConfig{
-            NamespaceId:         "public",
-            TimeoutMs:           5000,
-            NotLoadCacheAtStart: true,
-            LogDir:              "/tmp/nacos/log",
-            CacheDir:            "/tmp/nacos/cache",
-            LogLevel:            "info",
-            Username:            "your-name",
-            Password:            "your-password"
+        NamespaceId:         "public",
+        TimeoutMs:           5000,
+        NotLoadCacheAtStart: true,
+        LogDir:              "/tmp/nacos/log",
+        CacheDir:            "/tmp/nacos/cache",
+        LogLevel:            "info",
+        Username:            "your-name",
+        Password:            "your-password",
     }
     
-    cli,err := clients.NewNamingClient(
+    cli, err := clients.NewNamingClient(
         vo.NacosClientParam{
             ClientConfig:  &cc,
             ServerConfigs: sc,
-        },)
+        },
+    )
     if err != nil {
 	    panic(err)	
     }
@@ -176,10 +174,8 @@ func main() {
 | serverPort               | 8848                               | nacos server port                 |
 | namespace                 |                                    | the namespaceId of nacos          |
 
-
-
 ## Compatibility
-The server of Nacos2.0 is fully compatible with 1.X nacos-sdk-go. [see](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
 
+The server of Nacos2.0 is fully compatible with 1.X nacos-sdk-go. [see](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
 
 maintained by: [baiyutang](https://github.com/baiyutang)
