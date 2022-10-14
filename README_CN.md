@@ -6,7 +6,9 @@
 
 ##  这个项目应当如何使用?
 
-### 服务端
+### 基本使用
+
+#### 服务端
 
 ```go
 import (
@@ -40,9 +42,7 @@ func main() {
 }
 ```
 
-更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/server/main.go)
-
-### 客户端
+#### 客户端
 
 ```go
 import (
@@ -69,11 +69,9 @@ func main() {
 }
 ```
 
-更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/client/main.go)
+### 自定义 Nacos Client 配置
 
-## 自定义 Nacos Client 配置
-
-### 服务端
+#### 服务端
 
 ```go
 import (
@@ -125,9 +123,7 @@ func main() {
 }
 ```
 
-更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/server/main.go)
-
-### 客户端
+#### 客户端
 
 ```go
 import (
@@ -172,15 +168,17 @@ func main() {
 }
 ```
 
-更多示例请参考 [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/client/main.go)
-
-## 环境变量
+### 环境变量
 
 | 变量名 | 变量默认值 | 作用 |
 | ------------------------- | ---------------------------------- | --------------------------------- |
 | serverAddr               | 127.0.0.1                          | nacos 服务器地址 |
 | serverPort               | 8848                               | nacos 服务器端口            |
 | namespace                 |                                    | nacos 中的 namespace Id |
+
+### 更多信息
+
+更多示例请参考 [example](example)
 
 ## 兼容性
 

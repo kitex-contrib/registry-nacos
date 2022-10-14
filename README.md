@@ -6,7 +6,9 @@ Nacos as service discovery.
 
 ## How to use?
 
-### Server
+### Basic
+
+#### Server
 
 ```go
 import (
@@ -40,9 +42,7 @@ func main() {
 }
 ```
 
-Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/server/main.go) for more usage.
-
-### Client
+#### Client
 
 ```go
 import (
@@ -69,11 +69,9 @@ func main() {
 }
 ```
 
-Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/basic/client/main.go) for more usage.
+### Custom Nacos Client Configuration
 
-## Custom Nacos Client Configuration
-
-### Server
+#### Server
 
 ```go
 import (
@@ -125,9 +123,7 @@ func main() {
 }
 ```
 
-Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/server/main.go) for more usage.
-
-### Client
+#### Client
 
 ```go
 import (
@@ -172,15 +168,17 @@ func main() {
 }
 ```
 
-Refer to [example](https://github.com/kitex-contrib/registry-nacos/blob/main/example/custom-config/client/main.go) for more usage.
-
-## Environment Variable
+### Environment Variable
 
 | Environment Variable Name | Environment Variable Default Value | Environment Variable Introduction |
 | ------------------------- | ---------------------------------- | --------------------------------- |
 | serverAddr               | 127.0.0.1                          | nacos server address              |
 | serverPort               | 8848                               | nacos server port                 |
 | namespace                 |                                    | the namespaceId of nacos          |
+
+### More Info
+
+Refer to [example](example) for more usage.
 
 ## Compatibility
 
