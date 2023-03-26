@@ -18,10 +18,10 @@ import (
 	"context"
 	"log"
 
-	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api"
-	"github.com/cloudwego/kitex-examples/hello/kitex_gen/api/hello"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api"
+	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/nacos"
 	"github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
