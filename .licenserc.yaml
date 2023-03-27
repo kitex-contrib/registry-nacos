@@ -19,5 +19,6 @@ header:
     copyright-owner: CloudWeGo Authors
   paths:
     - '**/*.go'
-
+  paths-ignore:
+    - example/hello/**
   comment: on-failure
