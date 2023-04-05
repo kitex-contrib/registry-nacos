@@ -16,7 +16,7 @@ package nacos
 
 import (
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/nacos-group/nacos-sdk-go/common/logger"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/logger"
 )
 
 type customNacosLogger struct{}

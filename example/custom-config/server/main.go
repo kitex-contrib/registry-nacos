@@ -23,9 +23,9 @@ import (
 	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api"
 	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
 type HelloImpl struct{}

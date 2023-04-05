@@ -20,24 +20,22 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/pkg/registry"
-	"github.com/kitex-contrib/registry-nacos/nacos"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/stretchr/testify/assert"
 )
 
 func getNacosClient() (naming_client.INamingClient, error) {
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
+		*constant.NewServerConfig("161.189.108.121", 8848),
 	}
 
 	cc := constant.ClientConfig{
 		NamespaceId:         "public",
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
-		CustomLogger:        nacos.NewCustomNacosLogger(),
 		CacheDir:            "/tmp/nacos/cache",
 	}
 

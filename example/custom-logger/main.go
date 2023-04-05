@@ -22,11 +22,10 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api"
 	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api/hello"
-	"github.com/kitex-contrib/registry-nacos/nacos"
 	"github.com/kitex-contrib/registry-nacos/registry"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
 type HelloImpl struct{}
@@ -52,7 +51,6 @@ func main() {
 		LogDir:              "/tmp/nacos/log",
 		CacheDir:            "/tmp/nacos/cache",
 		LogLevel:            "info",
-		CustomLogger:        nacos.NewCustomNacosLogger(), // With a custom Logger，you can use kitex `klog` or other.
 	}
 
 	cli, err := clients.NewNamingClient(
