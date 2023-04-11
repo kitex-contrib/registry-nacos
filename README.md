@@ -181,7 +181,6 @@ func main() {
 Refer to [example](example) for more usage.
 
 ## Compatibility
-
-The server of Nacos2.0 is fully compatible with 1.X nacos-sdk-go. [see](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
+This Package use Nacos1.x client. The Nacos2.0 and Nacos1.0 Server are fully compatible with it. [see](https://nacos.io/en-us/docs/v2/upgrading/2.0.0-compatibility.html)
 
 maintained by: [baiyutang](https://github.com/baiyutang)
