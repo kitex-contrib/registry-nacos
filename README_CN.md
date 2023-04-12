@@ -181,8 +181,7 @@ func main() {
 更多示例请参考 [example](example)
 
 ## 兼容性
-
-Nacos 2.0 和 1.X 版本的 nacos-sdk-go 是完全兼容的，[详情](https://nacos.io/en-us/docs/2.0.0-compatibility.html)
+该包使用 Nacos1.x 客户端，Nacos2.0 和 Nacos1.0 服务端完全兼容该版本. [详情](https://nacos.io/zh-cn/docs/v2/upgrading/2.0.0-compatibility.html)
 
 主要贡献者： [baiyutang](https://github.com/baiyutang)
 
