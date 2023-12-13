@@ -302,3 +302,29 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		}
 	}
 }
+
+func TestMergeTags(t *testing.T) {
+	t1 := map[string]string{
+		"k1": "v1",
+		"k2": "v2",
+	}
+	t2 := map[string]string{
+		"k3": "v3",
+		"k4": "v4",
+	}
+	merged := mergeTags(t1, t2)
+	assert.Equal(t, merged, map[string]string{
+		"k1": "v1",
+		"k2": "v2",
+		"k3": "v3",
+		"k4": "v4",
+	})
+	assert.Equal(t, t1, map[string]string{
+		"k1": "v1",
+		"k2": "v2",
+	})
+	assert.Equal(t, t2, map[string]string{
+		"k3": "v3",
+		"k4": "v4",
+	})
+}

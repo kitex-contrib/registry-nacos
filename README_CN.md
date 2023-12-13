@@ -175,6 +175,7 @@ func main() {
 | serverAddr               | 127.0.0.1                          | nacos 服务器地址 |
 | serverPort               | 8848                               | nacos 服务器端口            |
 | namespace                 |                                    | nacos 中的 namespace Id |
+| NACOS_ENV_TAGS           | ""                                 | 支持注入默认 nacos tags|
 
 ### 更多信息
 

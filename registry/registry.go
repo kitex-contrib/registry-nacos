@@ -91,6 +91,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 			return fmt.Errorf("parse registry info addr error: %w", err)
 		}
 	}
+
 	_, e := n.cli.RegisterInstance(vo.RegisterInstanceParam{
 		Ip:          host,
 		Port:        uint64(p),
@@ -98,7 +99,7 @@ func (n *nacosRegistry) Register(info *registry.Info) error {
 		Weight:      float64(info.Weight),
 		Enable:      true,
 		Healthy:     true,
-		Metadata:    info.Tags,
+		Metadata:    mergeTags(info.Tags, nacos.Tags),
 		GroupName:   n.opts.group,
 		ClusterName: n.opts.cluster,
 		Ephemeral:   true,
@@ -170,4 +171,21 @@ func (n *nacosRegistry) Deregister(info *registry.Info) error {
 		return err
 	}
 	return nil
+}
+
+// should not modify the source data.
+func mergeTags(ts ...map[string]string) map[string]string {
+	if len(ts) == 0 {
+		return nil
+	}
+	if len(ts) == 1 {
+		return ts[0]
+	}
+	tags := map[string]string{}
+	for _, t := range ts {
+		for k, v := range t {
+			tags[k] = v
+		}
+	}
+	return tags
 }
