@@ -21,10 +21,15 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
+// Option is the way to config a client.
+type Option struct {
+	F func(o *vo.NacosClientParam)
+}
+
 // NewDefaultNacosClient Create a default Nacos client
 // It can create a client with default config by env variable.
 // See: env.go
-func NewDefaultNacosClient() (naming_client.INamingClient, error) {
+func NewDefaultNacosClient(opts ...Option) (naming_client.INamingClient, error) {
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig(NacosAddr(), uint64(NacosPort())),
 	}
@@ -34,12 +39,14 @@ func NewDefaultNacosClient() (naming_client.INamingClient, error) {
 		NotLoadCacheAtStart: true,
 		CustomLogger:        NewCustomNacosLogger(),
 	}
-	cli, err := clients.NewNamingClient(
-		vo.NacosClientParam{
-			ClientConfig:  &cc,
-			ServerConfigs: sc,
-		},
-	)
+	param := vo.NacosClientParam{
+		ClientConfig:  &cc,
+		ServerConfigs: sc,
+	}
+	for _, opt := range opts {
+		opt.F(&param)
+	}
+	cli, err := clients.NewNamingClient(param)
 	if err != nil {
 		return nil, err
 	}
