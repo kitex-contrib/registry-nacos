@@ -25,7 +25,7 @@ import (
 const (
 	NACOS_ENV_SERVER_ADDR     = "serverAddr"
 	NACOS_ENV_PORT            = "serverPort"
-	NACOS_ENV_TAGS            = "NACOS_ENV_TAGS"
+	NACOS_ENV_TAGS            = "KITEX_NACOS_ENV_TAGS"
 	NACOS_ENV_NAMESPACE_ID    = "namespace"
 	NACOS_DEFAULT_SERVER_ADDR = "127.0.0.1"
 	NACOS_DEFAULT_PORT        = 8848
