@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/client"
-	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
-	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
+	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api"
+	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/v2/resolver"
 )
 
