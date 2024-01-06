@@ -40,7 +40,11 @@ func (h *HelloImpl) Echo(_ context.Context, req *api.Request) (resp *api.Respons
 func main() {
 	// the nacos server config
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
+		*constant.NewServerConfig("127.0.0.1", 8848,
+			func(sc *constant.ServerConfig) {
+				// it is not recommended to modify GRPC-Port unless necessary,default by server port +1000
+				sc.GrpcPort = 9848
+			}),
 	}
 
 	// the nacos client config
