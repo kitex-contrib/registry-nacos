@@ -87,6 +87,7 @@ func (n *nacosResolver) Resolve(_ context.Context, desc string) (discovery.Resul
 	if err != nil {
 		return discovery.Result{}, err
 	}
+
 	if len(res) == 0 {
 		return discovery.Result{}, fmt.Errorf("no instance remains for %v", desc)
 	}

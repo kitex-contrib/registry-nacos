@@ -59,25 +59,26 @@ func init() {
 }
 
 func getNacosClient() (naming_client.INamingClient, error) {
+	// create ServerConfig
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
+		*constant.NewServerConfig("127.0.0.1", 8848, constant.WithContextPath("/nacos"), constant.WithScheme("http")),
 	}
 
-	cc := constant.ClientConfig{
-		NamespaceId:         "public",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		LogLevel:            "debug",
-	}
+	// create ClientConfig
+	cc := *constant.NewClientConfig(
+		constant.WithTimeoutMs(50000),
+		constant.WithUpdateCacheWhenEmpty(true),
+		constant.WithNotLoadCacheAtStart(true),
+	)
 
-	return clients.NewNamingClient(
+	// create naming client
+	newClient, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ClientConfig:  &cc,
 			ServerConfigs: sc,
 		},
 	)
+	return newClient, err
 }
 
 // TestNacosResolverResolve test Resolve a service
@@ -131,10 +132,7 @@ func TestNacosResolverResolve(t *testing.T) {
 	}
 
 	err := nacosregistry.NewNacosRegistry(nacosCli).Deregister(svcInfo)
-	if err != nil {
-		t.Errorf("Deregister Fail")
-		return
-	}
+	assert.Nil(t, err)
 }
 
 // TestNacosResolverDifferentCluster test NewNacosResolver WithCluster option

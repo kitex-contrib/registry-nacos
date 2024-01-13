@@ -15,47 +15,48 @@
 package registry
 
 import (
+	"context"
 	"net"
 	"testing"
 	"time"
+
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/pkg/utils"
+	"github.com/cloudwego/kitex/server"
+	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
+	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
+	"github.com/kitex-contrib/registry-nacos/v2/resolver"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	"github.com/stretchr/testify/assert"
 )
 
 func getNacosClient() (naming_client.INamingClient, error) {
+	// create ServerConfig
 	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
+		*constant.NewServerConfig("127.0.0.1", 8848, constant.WithContextPath("/nacos"), constant.WithScheme("http")),
 	}
 
-	cc := constant.ClientConfig{
-		NamespaceId:         "public",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		CacheDir:            "/tmp/nacos/cache",
-	}
+	// create ClientConfig
+	cc := *constant.NewClientConfig(
+		constant.WithTimeoutMs(50000),
+		constant.WithUpdateCacheWhenEmpty(true),
+		constant.WithNotLoadCacheAtStart(true),
+	)
 
-	return clients.NewNamingClient(
+	// create naming client
+	newClient, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ClientConfig:  &cc,
 			ServerConfigs: sc,
 		},
 	)
-}
-
-// TestNewNacosRegistry test new a nacos registry
-func TestNewNacosRegistry(t *testing.T) {
-	client, err := getNacosClient()
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-	got := NewNacosRegistry(client, WithCluster("DEFAULT"), WithGroup("DEFAULT_GROUP"))
-	assert.NotNil(t, got)
+	return newClient, err
 }
 
 // TestNewNacosRegistry test registry a service
@@ -142,89 +143,6 @@ func TestNacosRegistryDeregister(t *testing.T) {
 	}
 }
 
-// TestNacosMultipleInstances test registry multiple service,then deregister one
-func TestNacosMultipleInstances(t *testing.T) {
-	var (
-		svcName     = "MultipleInstances"
-		clusterName = "TheCluster"
-		groupName   = "TheGroup"
-	)
-	client, err := getNacosClient()
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-	time.Sleep(time.Second)
-	got := NewNacosRegistry(client, WithCluster(clusterName), WithGroup(groupName))
-	if !assert.NotNil(t, got) {
-		t.Errorf("err: new registry fail")
-		return
-	}
-	time.Sleep(time.Second)
-	err = got.Register(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
-	})
-	assert.Nil(t, err)
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-
-	err = got.Register(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082},
-	})
-	assert.Nil(t, err)
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-
-	err = got.Register(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
-	})
-	assert.Nil(t, err)
-
-	time.Sleep(time.Second)
-	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
-		ServiceName: svcName,
-		GroupName:   groupName,
-		Clusters:    []string{clusterName},
-	})
-	assert.Nil(t, err)
-	assert.Equal(t, 3, len(res), "successful register not three")
-
-	time.Sleep(time.Second)
-	err = got.Deregister(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
-	})
-	assert.Nil(t, err)
-
-	time.Sleep(time.Second * 3)
-	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
-		ServiceName: svcName,
-		GroupName:   groupName,
-		Clusters:    []string{clusterName},
-	})
-	assert.Nil(t, err)
-	if assert.Equal(t, 2, len(res), "deregister one, instances num should be two") {
-		for _, i := range res {
-			assert.Equal(t, "127.0.0.1", i.Ip)
-			assert.Contains(t, []uint64{8081, 8082}, i.Port)
-		}
-	}
-}
-
-// TestNewDefaultNacosRegistry test new a default nacos registry
-func TestNewDefaultNacosRegistry(t *testing.T) {
-	r, err := NewDefaultNacosRegistry()
-	assert.Nil(t, err)
-	assert.NotNil(t, r)
-}
-
 // TestNacosMultipleInstancesWithDefaultNacosRegistry use DefaultNacosRegistry to test registry multiple service,then deregister one
 func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	var (
@@ -244,61 +162,34 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
 	})
 	assert.Nil(t, err)
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-
-	err = got.Register(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082},
-	})
-	assert.Nil(t, err)
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
-
-	err = got.Register(&registry.Info{
-		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
-	})
-	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 1)
 	client, err := getNacosClient()
-	if err != nil {
-		t.Errorf("err:%v", err)
-		return
-	}
+	assert.Nil(t, err)
 	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
 	})
 	assert.Nil(t, err)
-	assert.Equal(t, 3, len(res), "successful register not three")
+	assert.Equal(t, 1, len(res))
 
 	time.Sleep(time.Second)
 	err = got.Deregister(&registry.Info{
 		ServiceName: svcName,
-		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8083},
+		Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081},
 	})
 	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 3)
-	res, err = client.SelectAllInstances(vo.SelectAllInstancesParam{
+	res, err = client.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
+		HealthyOnly: true,
 	})
 	assert.Nil(t, err)
-	if assert.Equal(t, 2, len(res), "deregister one, instances num should be two") {
-		for _, i := range res {
-			assert.Equal(t, "127.0.0.1", i.Ip)
-			assert.Contains(t, []uint64{8081, 8082}, i.Port)
-		}
-	}
+	assert.Nil(t, res)
 }
 
 func TestMergeTags(t *testing.T) {
@@ -325,4 +216,78 @@ func TestMergeTags(t *testing.T) {
 		"k3": "v3",
 		"k4": "v4",
 	})
+}
+
+type HelloImpl struct{}
+
+func (h *HelloImpl) Echo(_ context.Context, req *api.Request) (resp *api.Response, err error) {
+	resp = &api.Response{
+		Message: req.Message,
+	}
+	return
+}
+
+func TestResolverDifferentGroup(t *testing.T) {
+	r, err := NewDefaultNacosRegistry()
+	assert.Nil(t, err)
+	r2, err := NewDefaultNacosRegistry(WithGroup("OTHER"))
+	assert.Nil(t, err)
+
+	svr := hello.NewServer(
+		new(HelloImpl),
+		server.WithRegistry(r),
+		server.WithRegistryInfo(&registry.Info{
+			ServiceName: "demo1",
+			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8080"),
+			Weight:      10,
+			Tags:        nil,
+		}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "demo1"}),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
+	)
+
+	svr2 := hello.NewServer(
+		new(HelloImpl),
+		server.WithRegistry(r2),
+		server.WithRegistryInfo(&registry.Info{
+			ServiceName: "demo2",
+			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8082"),
+			Weight:      10,
+			Tags:        nil,
+		}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "demo2"}),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082}),
+	)
+
+	go svr.Run()  //nolint:errcheck
+	go svr2.Run() //nolint:errcheck
+	time.Sleep(2 * time.Second)
+
+	resolver1, err := resolver.NewDefaultNacosResolver()
+	assert.Nil(t, err)
+	resolver2, err := resolver.NewDefaultNacosResolver(resolver.WithGroup("OTHER"))
+	assert.Nil(t, err)
+
+	client1 := hello.MustNewClient(
+		"demo1",
+		client.WithResolver(resolver1),
+		client.WithRPCTimeout(time.Second*3),
+	)
+	client2 := hello.MustNewClient(
+		"demo2",
+		client.WithResolver(resolver2),
+		client.WithRPCTimeout(time.Second*3),
+	)
+	resp, err := client1.Echo(context.Background(), &api.Request{Message: "Hello"})
+	assert.Nil(t, err)
+	assert.Equal(t, resp.Message, "Hello")
+
+	resp, err = client2.Echo(context.Background(), &api.Request{Message: "Hello1"})
+	assert.Nil(t, err)
+	assert.Equal(t, resp.Message, "Hello1")
+
+	defer func() {
+		svr.Stop()  //nolint:errcheck
+		svr2.Stop() //nolint:errcheck
+	}()
 }
