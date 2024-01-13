@@ -21,4 +21,5 @@ header:
     - '**/*.go'
   paths-ignore:
     - example/hello/**
+    - v2/example/hello/**
   comment: on-failure

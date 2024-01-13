@@ -20,8 +20,8 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
-	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api"
-	"github.com/kitex-contrib/registry-nacos/example/hello/kitex_gen/api/hello"
+	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
+	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/v2/registry"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"

@@ -3,15 +3,19 @@ module github.com/kitex-contrib/registry-nacos/v2
 go 1.16
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1800 // indirect
+	github.com/apache/thrift v0.13.0
 	github.com/cloudwego/kitex v0.8.0
-	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/kitex-contrib/registry-nacos v0.1.1
-	github.com/kr/pretty v0.3.0 // indirect
 	github.com/nacos-group/nacos-sdk-go/v2 v2.2.3
+	github.com/stretchr/testify v1.8.4
+
+)
+
+require (
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1800 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
-	github.com/stretchr/testify v1.8.3
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
