@@ -29,7 +29,8 @@ func TestEnvFunc(t *testing.T) {
 
 func TestParseTags(t *testing.T) {
 	assert.Equal(t, parseTags("k1=v1,k2=v2"), map[string]string{
-		"k1": "v1",
-		"k2": "v2",
+		"cloudwego.nacos.client": "kitex",
+		"k1":                     "v1",
+		"k2":                     "v2",
 	})
 }
