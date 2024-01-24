@@ -40,10 +40,12 @@ func init() {
 }
 
 func parseTags(tags string) map[string]string {
-	if len(tags) == 0 {
-		return nil
+	out := map[string]string{
+		"cloudwego.nacos.client": "kitex",
 	}
-	out := map[string]string{}
+	if len(tags) == 0 {
+		return out
+	}
 	parts := strings.Split(tags, ",")
 	for _, part := range parts {
 		tag := strings.Split(part, "=")

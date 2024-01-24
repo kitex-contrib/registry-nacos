@@ -175,7 +175,7 @@ func main() {
 | serverAddr               | 127.0.0.1                          | nacos server address              |
 | serverPort               | 8848                               | nacos server port                 |
 | namespace                 |                                    | the namespaceId of nacos          |
-| NACOS_ENV_TAGS           | ""                                  | support inject default tags|
+| KITEX_NACOS_ENV_TAGS           | ""                                  | support inject default tags|
 
 ### More Info
 
