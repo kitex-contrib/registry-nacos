@@ -44,6 +44,8 @@ jobs:
       #      - name: typos-action
       #        uses: crate-ci/typos@v1.2.1
 
+      - name: Build
+        run: go build ./...
 
       - name: Benchmark
         run: go test -bench=. -benchmem -run=none ./...
