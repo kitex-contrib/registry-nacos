@@ -61,7 +61,7 @@ func getNacosClient() (naming_client.INamingClient, error) {
 
 // TestNewNacosRegistry test registry a service
 func TestNacosRegistryRegister(t *testing.T) {
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
 		return
@@ -80,7 +80,7 @@ func TestNacosRegistryRegister(t *testing.T) {
 	}{
 		{
 			name:   "common",
-			fields: fields{client},
+			fields: fields{nacosClient},
 			args: args{info: &registry.Info{
 				ServiceName: "demo.kitex-contrib.local",
 				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080},
@@ -103,7 +103,7 @@ func TestNacosRegistryRegister(t *testing.T) {
 
 // TestNacosRegistryDeregister test deregister a service
 func TestNacosRegistryDeregister(t *testing.T) {
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
 		return
@@ -129,7 +129,7 @@ func TestNacosRegistryDeregister(t *testing.T) {
 				StartTime:   time.Now(),
 				Tags:        map[string]string{"env": "local"},
 			}},
-			fields:  fields{client},
+			fields:  fields{nacosClient},
 			wantErr: false,
 		},
 	}
@@ -164,9 +164,9 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 1)
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	assert.Nil(t, err)
-	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
+	res, err := nacosClient.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
@@ -182,7 +182,7 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 3)
-	res, err = client.SelectInstances(vo.SelectInstancesParam{
+	res, err = nacosClient.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
