@@ -19,19 +19,22 @@ jobs:
           MODE: standalone
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
 
-      - uses: actions/cache@v3
+      - name: Module cache
+        uses: actions/cache@v4
         with:
-          path: ~/go/pkg/mod
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-go-
+            ${{ runner.os }}-go
 
       - name: Check License Header
         uses: apache/skywalking-eyes/header@v0.4.0
