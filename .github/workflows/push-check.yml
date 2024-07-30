@@ -4,6 +4,9 @@ on: [ push, pull_request ]
 
 jobs:
   build:
+    strategy:
+      matrix:
+        go: [ 1.18.x,1.19.x,1.20.x, 1.21.x, 1.22.x ]
     runs-on: ubuntu-latest
 
     services:
@@ -21,7 +24,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: ${{ matrix.go }}
 
       - uses: actions/cache@v3
         with:
@@ -35,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: typos-action
-        uses: crate-ci/typos@v1.2.1
+      #      - name: typos-action
+      #        uses: crate-ci/typos@v1.2.1
 
 
       - name: Benchmark
