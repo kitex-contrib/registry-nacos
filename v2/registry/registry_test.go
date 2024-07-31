@@ -32,7 +32,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -188,7 +187,7 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.Equal(t, errors.New("instance list is empty!"), err)
+	assert.Equal(t, "instance list is empty!", err.Error())
 	assert.Equal(t, 0, len(res))
 }
 
