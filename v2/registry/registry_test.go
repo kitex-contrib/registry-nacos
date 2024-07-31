@@ -187,7 +187,7 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.NoError(t, err)
+	assert.Equal(t, "instance list is empty!", err.Error())
 	assert.Equal(t, 0, len(res))
 }
 
