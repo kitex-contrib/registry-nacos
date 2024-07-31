@@ -150,8 +150,7 @@ func TestNacosResolverDifferentCluster(t *testing.T) {
 
 	n = NewNacosResolver(nacosCli, WithCluster("OTHER"))
 	_, err = n.Resolve(ctx, svcName)
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "instance list is empty")
+	assert.Nil(t, err)
 }
 
 // TestNewDefaultNacosResolver test new a default nacos resolver

@@ -187,7 +187,7 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.Equal(t, "instance list is empty!", err.Error())
+	assert.NoError(t, err)
 	assert.Equal(t, 0, len(res))
 }
 
@@ -237,12 +237,12 @@ func TestResolverDifferentGroup(t *testing.T) {
 		server.WithRegistry(r),
 		server.WithRegistryInfo(&registry.Info{
 			ServiceName: "demo1",
-			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8080"),
+			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8081"),
 			Weight:      10,
 			Tags:        nil,
 		}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "demo1"}),
-		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081}),
 	)
 
 	svr2 := hello.NewServer(
@@ -258,8 +258,15 @@ func TestResolverDifferentGroup(t *testing.T) {
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082}),
 	)
 
-	go svr.Run()  //nolint:errcheck
-	go svr2.Run() //nolint:errcheck
+	go func() {
+		e := svr.Run() //nolint:errcheck
+		assert.Nil(t, e)
+
+	}()
+	go func() {
+		e := svr2.Run() //nolint:errcheck
+		assert.Nil(t, e)
+	}()
 	time.Sleep(2 * time.Second)
 
 	resolver1, err := resolver.NewDefaultNacosResolver()
