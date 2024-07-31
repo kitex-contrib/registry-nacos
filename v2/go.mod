@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
+	github.com/alibabacloud-go/debug v1.0.0 // indirect
 	github.com/alibabacloud-go/tea v1.1.17 // indirect
 	github.com/alibabacloud-go/tea-utils v1.4.4 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1800 // indirect
