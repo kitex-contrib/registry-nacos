@@ -21,19 +21,19 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/utils"
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/v2/resolver"
-	"github.com/stretchr/testify/assert"
-
-	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func getNacosClient() (naming_client.INamingClient, error) {
@@ -188,8 +188,8 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.Nil(t, err)
-	assert.Nil(t, res)
+	assert.Equal(t, errors.New("instance list is empty!"), err)
+	assert.Equal(t, 0, len(res))
 }
 
 func TestMergeTags(t *testing.T) {
