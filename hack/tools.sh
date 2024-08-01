@@ -18,7 +18,7 @@ all_modules=$(util::find_modules)
 function test() {
 	for mod in $all_modules; do
 			pushd "$mod" >/dev/null &&
-				echo "go test $(sed -n 1p go.mod | cut -d ' ' -f2)" &&
+				echo "go mod tidy && go test $(sed -n 1p go.mod | cut -d ' ' -f2)" &&
 				go test -race -covermode=atomic -coverprofile=coverage.out ./...
 			popd >/dev/null || exit
 	done
