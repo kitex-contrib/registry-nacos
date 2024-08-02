@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      #      - name: typos-action
-      #        uses: crate-ci/typos@v1.2.1
+      - name: typos-action
+        uses: crate-ci/typos@v1.2.1
 
       - name: Benchmark
         run: go test -bench=. -benchmem -run=none ./...
