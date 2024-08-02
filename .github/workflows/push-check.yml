@@ -48,7 +48,7 @@ jobs:
         # run: go test -bench=. -benchmem -run=none ./...
 
       - name: Unit Test
-        run: make test
+        run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
         env:
           serverAddr: 127.0.0.1
           serverPort: 8848
