@@ -21,19 +21,18 @@ import (
 	"time"
 
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/utils"
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/v2/resolver"
-	"github.com/stretchr/testify/assert"
-
-	"github.com/cloudwego/kitex/pkg/registry"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
+	"github.com/stretchr/testify/assert"
 )
 
 func getNacosClient() (naming_client.INamingClient, error) {
@@ -61,7 +60,7 @@ func getNacosClient() (naming_client.INamingClient, error) {
 
 // TestNewNacosRegistry test registry a service
 func TestNacosRegistryRegister(t *testing.T) {
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
 		return
@@ -80,7 +79,7 @@ func TestNacosRegistryRegister(t *testing.T) {
 	}{
 		{
 			name:   "common",
-			fields: fields{client},
+			fields: fields{nacosClient},
 			args: args{info: &registry.Info{
 				ServiceName: "demo.kitex-contrib.local",
 				Addr:        &net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080},
@@ -103,7 +102,7 @@ func TestNacosRegistryRegister(t *testing.T) {
 
 // TestNacosRegistryDeregister test deregister a service
 func TestNacosRegistryDeregister(t *testing.T) {
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	if err != nil {
 		t.Errorf("err:%v", err)
 		return
@@ -129,7 +128,7 @@ func TestNacosRegistryDeregister(t *testing.T) {
 				StartTime:   time.Now(),
 				Tags:        map[string]string{"env": "local"},
 			}},
-			fields:  fields{client},
+			fields:  fields{nacosClient},
 			wantErr: false,
 		},
 	}
@@ -164,9 +163,9 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 1)
-	client, err := getNacosClient()
+	nacosClient, err := getNacosClient()
 	assert.Nil(t, err)
-	res, err := client.SelectAllInstances(vo.SelectAllInstancesParam{
+	res, err := nacosClient.SelectAllInstances(vo.SelectAllInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
@@ -182,14 +181,14 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 	assert.Nil(t, err)
 
 	time.Sleep(time.Second * 3)
-	res, err = client.SelectInstances(vo.SelectInstancesParam{
+	res, err = nacosClient.SelectInstances(vo.SelectInstancesParam{
 		ServiceName: svcName,
 		GroupName:   groupName,
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.Nil(t, err)
-	assert.Nil(t, res)
+	assert.Equal(t, "instance list is empty!", err.Error())
+	assert.Equal(t, 0, len(res))
 }
 
 func TestMergeTags(t *testing.T) {
@@ -238,12 +237,12 @@ func TestResolverDifferentGroup(t *testing.T) {
 		server.WithRegistry(r),
 		server.WithRegistryInfo(&registry.Info{
 			ServiceName: "demo1",
-			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8080"),
+			Addr:        utils.NewNetAddr("tcp", "127.0.0.1:8081"),
 			Weight:      10,
 			Tags:        nil,
 		}),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: "demo1"}),
-		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8080}),
+		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8081}),
 	)
 
 	svr2 := hello.NewServer(
@@ -259,8 +258,14 @@ func TestResolverDifferentGroup(t *testing.T) {
 		server.WithServiceAddr(&net.TCPAddr{IP: net.IPv4(127, 0, 0, 1), Port: 8082}),
 	)
 
-	go svr.Run()  //nolint:errcheck
-	go svr2.Run() //nolint:errcheck
+	go func() {
+		e := svr.Run() //nolint:errcheck
+		assert.Nil(t, e)
+	}()
+	go func() {
+		e := svr2.Run() //nolint:errcheck
+		assert.Nil(t, e)
+	}()
 	time.Sleep(2 * time.Second)
 
 	resolver1, err := resolver.NewDefaultNacosResolver()
