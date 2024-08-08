@@ -25,16 +25,13 @@ import (
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/utils"
 	"github.com/cloudwego/kitex/server"
-	
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api"
 	"github.com/kitex-contrib/registry-nacos/v2/example/hello/kitex_gen/api/hello"
 	"github.com/kitex-contrib/registry-nacos/v2/resolver"
-	
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
-	
 	"github.com/stretchr/testify/assert"
 )
 
@@ -264,7 +261,6 @@ func TestResolverDifferentGroup(t *testing.T) {
 	go func() {
 		e := svr.Run() //nolint:errcheck
 		assert.Nil(t, e)
-
 	}()
 	go func() {
 		e := svr2.Run() //nolint:errcheck

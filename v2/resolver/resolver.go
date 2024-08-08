@@ -20,9 +20,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/discovery"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	
 	"github.com/kitex-contrib/registry-nacos/v2/nacos"
-	
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
