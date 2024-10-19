@@ -63,6 +63,6 @@ require (
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
-replace github.com/cloudwego-contrib/cwgo-pkg/registry/nacos => ../cwgo-pkg-registry/registry/nacos
+replace github.com/cloudwego-contrib/cwgo-pkg/registry/nacos => github.com/smx-Morgan/cwgo-pkg/registry/nacos v0.0.0-20241016000926-d56ef7e0f578
 
-replace github.com/cloudwego-contrib/cwgo-pkg/registry/nacos/options => ../cwgo-pkg-registry/registry/nacos/options
+replace github.com/cloudwego-contrib/cwgo-pkg/registry/nacos/options => github.com/smx-Morgan/cwgo-pkg/registry/nacos/options v0.0.0-20241016000926-d56ef7e0f578
