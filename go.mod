@@ -1,6 +1,6 @@
 module github.com/kitex-contrib/registry-nacos
 
-go 1.18
+go 1.21
 
 require (
 	github.com/apache/thrift v0.20.0
