@@ -187,8 +187,11 @@ func TestNacosMultipleInstancesWithDefaultNacosRegistry(t *testing.T) {
 		Clusters:    []string{clusterName},
 		HealthyOnly: true,
 	})
-	assert.Equal(t, "instance list is empty!", err.Error())
-	assert.Equal(t, 0, len(res))
+	if err != nil {
+		assert.Equal(t, nil, err.Error())
+	} else {
+		assert.Equal(t, 0, len(res))
+	}
 }
 
 func TestMergeTags(t *testing.T) {

@@ -16,10 +16,9 @@ package nacos
 
 import (
 	"os"
-	"strconv"
 	"strings"
 
-	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego-contrib/cwgo-pkg/registry/nacos/nacoskitex/v2/nacos"
 )
 
 const (
@@ -56,28 +55,15 @@ func parseTags(tags string) map[string]string {
 
 // NacosPort Get Nacos port from environment variables
 func NacosPort() int64 {
-	portText := os.Getenv(NACOS_ENV_PORT)
-	if len(portText) == 0 {
-		return NACOS_DEFAULT_PORT
-	}
-	port, err := strconv.ParseInt(portText, 10, 64)
-	if err != nil {
-		klog.Errorf("ParseInt failed,err:%s", err.Error())
-		return NACOS_DEFAULT_PORT
-	}
-	return port
+	return nacos.NacosPort()
 }
 
 // NacosAddr Get Nacos addr from environment variables
 func NacosAddr() string {
-	addr := os.Getenv(NACOS_ENV_SERVER_ADDR)
-	if len(addr) == 0 {
-		return NACOS_DEFAULT_SERVER_ADDR
-	}
-	return addr
+	return nacos.NacosAddr()
 }
 
 // NacosNameSpaceId Get Nacos namespace id from environment variables
 func NacosNameSpaceId() string {
-	return os.Getenv(NACOS_ENV_NAMESPACE_ID)
+	return nacos.NacosNameSpaceId()
 }
