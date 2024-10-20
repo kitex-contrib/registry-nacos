@@ -26,5 +26,5 @@ type Option = nacos.Option
 // It can create a client with default config by env variable.
 // See: env.go
 func NewDefaultNacosClient(opts ...Option) (naming_client.INamingClient, error) {
-	return NewDefaultNacosClient(opts...)
+	return nacos.NewDefaultNacosClient(opts...)
 }
