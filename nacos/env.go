@@ -15,9 +15,10 @@
 package nacos
 
 import (
-	"github.com/cloudwego-contrib/cwgo-pkg/registry/nacos/nacoskitex/nacos"
 	"os"
 	"strings"
+
+	"github.com/cloudwego-contrib/cwgo-pkg/registry/nacos/nacoskitex/nacos"
 )
 
 const (
