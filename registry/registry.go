@@ -21,11 +21,6 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 )
 
-type options struct {
-	cluster string
-	group   string
-}
-
 // Option is nacos option.
 type Option = nacosOption.Option
 
