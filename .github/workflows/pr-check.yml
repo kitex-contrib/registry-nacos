@@ -3,6 +3,16 @@ name: Pull Request Check
 on: pull_request
 
 jobs:
+  compliant:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check License Header
+        uses: apache/skywalking-eyes/header@v0.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -12,13 +22,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          # Enable it if we're going to use GitHub only
+          cache: true
 
   resolve-modules:
     name: resolve module
@@ -41,9 +46,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: latest
           working-directory: ${{ matrix.workdir }}
           args: -E gofumpt --timeout 10m
-          skip-pkg-cache: true
